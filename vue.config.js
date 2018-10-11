@@ -9,7 +9,7 @@ const env = process.env.NODE_ENV || 'development'
 fs.writeFileSync(path.join(__dirname, './config/env.js'), `export default '${env}'
 `)
 
-// 项目部署基础
+// 项目部署基础1
 // 默认情况下，我们假设你的应用将被部署在域的根目录下,
 // 例如：https://www.my-app.com/
 // 默认：'/'
