@@ -99,6 +99,7 @@ export const getHomeRoute = routers => {
       let res = getHomeRoute(item.children)
       if (res.name) return res
     } else {
+      //这是寻找name为home的对象
       if (item.name === 'home') homeRoute = item
     }
   }

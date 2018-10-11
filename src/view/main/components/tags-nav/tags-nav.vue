@@ -86,11 +86,13 @@ export default {
     handleTagsOption (type) {
       if (type === 'close-all') {
         // 关闭所有，除了upcomingMatter
-        let res = this.list.filter(item => item.name === 'upcomingMatter')
+        let res = this.list
+        // let res = this.list.filter(item => item.name === 'upcomingMatter')
         this.$emit('on-close', res, 'all')
       } else {
         // 关闭除当前页和upcomingMatter页的其他页
-        let res = this.list.filter(item => item.name === this.value.name || item.name === 'upcomingMatter')
+        // let res = this.list.filter(item => item.name === this.value.name || item.name === 'upcomingMatter')
+        let res = this.list.filter(item => item.name === this.value.name)
         this.$emit('on-close', res, 'others')
       }
     },

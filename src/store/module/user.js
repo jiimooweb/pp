@@ -37,15 +37,19 @@ export default {
           password
         }).then(res => {
           const data = res.data
+          console.log(res);
+          
           // console.log(res)
-          commit('setToken', res.token)
-          localStorage.setItem('token',res.token)
-          commit('setusername', res.user.name)
-          localStorage.setItem('name',res.user.name)
-          localStorage.setItem('userName',res.user.username)
-          localStorage.setItem('memberId',res.user.id)
-          localStorage.setItem('role',res.user.role.desc)
-          localStorage.setItem('phone',res.user.phone)
+          // commit('setToken', res.token)
+          // localStorage.setItem('token',res.token)
+          commit('setToken', res.data.token)
+          localStorage.setItem('token',res.data.token)
+          // commit('setusername', res.user.name)
+          // localStorage.setItem('name',res.user.name)
+          // localStorage.setItem('userName',res.user.username)
+          // localStorage.setItem('memberId',res.user.id)
+          // localStorage.setItem('role',res.user.role.desc)
+          // localStorage.setItem('phone',res.user.phone)
           resolve()
         }).catch(err => {
           reject(err)

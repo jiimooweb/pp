@@ -181,9 +181,9 @@ export default {
      */
     try {
       this.setTagNavList([
-        {"name":"upcomingMatter",
-        "path":"/matter/upcomingMatter",
-        "meta":{"icon":"ios-list-box-outline","title":"待办事项"}
+        {"name":"每日推荐",
+        "path":"/pzhanAll/dayRec",
+        "meta":{"icon":"ios-list-box-outline","title":"每日推荐"}
         }
       ]);
     } catch (error) {
@@ -196,6 +196,9 @@ export default {
     this.setLocal(this.$i18n.locale);
     // 文档提示
     window.router = this.$router;
+
+
+    return
     axios
         .request({
           url: "/notices",
@@ -293,30 +296,6 @@ export default {
           }
         })
     },10000)
-    /*
-    window.router = this.$router
-    window.Notice = this.$Notice
-    this.$Notice.close("hasMatter")
-    this.$Notice.info({
-      title: '通知',
-      duration: 0,
-      name:'hasMatter',
-      render: (h) => {
-        return h('p', {
-          style: {
-            fontSize: '13px'
-          }
-        }, [
-          '您有一条新的待办事项，请及时',
-          h('a', {
-            attrs: {
-              // onclick: 'this.vue.$router.push({path:"/matter/upcomingMatter"})'
-              onclick: 'window.router.push({path:"/matter/upcomingMatter"});window.Notice.close("hasMatter")'
-            }
-          },'处理')
-        ])
-      }
-    })*/
   }
 };
 </script>
