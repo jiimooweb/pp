@@ -37,21 +37,12 @@ export default {
           password
         }).then(res => {
           const data = res.data
-          console.log(res);
-          
-          // console.log(res)
-          // commit('setToken', res.token)
-          // localStorage.setItem('token',res.token)
-          commit('setToken', res.data.token)
-          localStorage.setItem('token',res.data.token)
-          // commit('setusername', res.user.name)
-          // localStorage.setItem('name',res.user.name)
-          // localStorage.setItem('userName',res.user.username)
-          // localStorage.setItem('memberId',res.user.id)
-          // localStorage.setItem('role',res.user.role.desc)
-          // localStorage.setItem('phone',res.user.phone)
+          commit('setToken', res.token)
+          localStorage.setItem('token',res.token)
           resolve()
         }).catch(err => {
+          console.log(err);
+          
           reject(err)
         })
       })
@@ -67,9 +58,6 @@ export default {
         //   reject(err)
         // })
         // 如果你的退出登录无需请求接口，则可以直接使用下面三行代码而无需使用logout调用接口
-        for(var i = 0; i < 9999; i++) {
-          clearInterval(i)
-      }
       localStorage.clear()
         commit('setToken', '')
         commit('setAccess', [])

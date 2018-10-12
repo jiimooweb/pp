@@ -34,21 +34,49 @@ export default [
     },
     {
         path: '/pzhanAll',
-        name: 'pzhanAll',
+        name: '功能',
         component: Main,
-        meta:{
-            icon:'ios-paper-outline'
+        meta: {
+            icon: 'ios-paper-outline'
         },
         children: [
             {
-              path: 'dayRec',
-              name: '每日推荐',
-              meta: {
-                icon: 'ios-paper-outline'
-              },
-              component: () => import('@/view/pzhanAll/dayRec/dayRec.vue')
+                path: 'dayRec',
+                name: '每日推荐',
+                meta: {
+                    icon: 'ios-paper-outline'
+                },
+                component: () => import('@/view/pzhanAll/dayRec/dayRec.vue')
+            }, {
+                path: 'picTag',
+                name: '图片标签管理',
+                meta: {
+                    icon: 'ios-paper-outline'
+                },
+                component: () => import('@/view/pzhanAll/picTag/picTag.vue')
+            }, {
+                path: 'picManage',
+                name: '图片管理',
+                meta: {
+                    icon: 'ios-paper-outline'
+                },
+                component: () => import('@/view/pzhanAll/picManage/picManage.vue')
+            }, {
+                path: 'lunbo',
+                name: '轮播图管理',
+                meta: {
+                    icon: 'ios-paper-outline'
+                },
+                component: () => import('@/view/pzhanAll/lunbo/lunbo.vue')
+            }, {
+                path: 'userManage',
+                name: '用户管理',
+                meta: {
+                    icon: 'ios-paper-outline'
+                },
+                component: () => import('@/view/pzhanAll/userManage/userManage.vue')
             }
-          ]
+        ]
     },
     {
         path: '/401',

@@ -34,8 +34,7 @@ export default {
         handleSubmit({ username, password }) {
             this.handleLogin({ username, password }).then(res => {
                 this.$router.push({
-                        // name: "home"
-                        name: "/pzhanAll/dayRec"
+                        name: "home"
                     });
             },res=>{
                 this.$Message.error('账号或密码错误，请重新登录')
