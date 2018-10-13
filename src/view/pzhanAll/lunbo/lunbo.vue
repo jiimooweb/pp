@@ -3,8 +3,8 @@
         <row>
             <i-col style="width:600px;height:300px; float:left;">
                 <Carousel v-model="value" loop>
-                    <CarouselItem v-for="item in lunboList">
-                        <div class="demo-carousel" :style="'width:600px;height:300px;background:'+item.pic">{{item.id}}</div>
+                    <CarouselItem v-for="item in defaultList">
+                        <div class="demo-carousel" :style="'width:600px;height:300px;background:url('+item.image+') no-repeat center  '"></div>
                     </CarouselItem>
                 </Carousel>
             </i-col>
@@ -23,11 +23,57 @@
                 </i-col>
             </row>
         </Modal>
+        <Modal v-model="groundPic" title="编辑轮播组图片" @on-ok="" @on-cancel="openGroundPic(false)">
+            <row>
+                <i-col>
+                    <Upload action="http://localhost:8000/qiniu/upload" :on-success='successUpload' :on-preview='previewUpload' :show-upload-list='true' :default-file-list="defaultList" :headers="headers">
+                        <Button icon="ios-cloud-upload-outline">上传图片</Button>
+                    </Upload>
+                </i-col>
+            </row>
+            <div slot="footer">
+            </div>
+        </Modal>
+        <Modal v-model="picData" title="图片信息" @on-ok="inputData()" @on-cancel="openPicData(false)">
+            <row>
+                <i-col>
+                    跳转链接
+                </i-col>
+                <i-col>
+                    <Input v-model="previewData.url"/>
+                </i-col>
+            </row>
+            <row style="margin-top:10px;">
+                <i-col>
+                    图片名称
+                </i-col>
+                <i-col>
+                    <Input v-model="previewData.name"/>
+                </i-col>
+            </row>
+            <row style="margin-top:10px;">
+                <i-col>
+                    备注
+                </i-col>
+                <i-col>
+                    <Input v-model="previewData.remake"/>
+                </i-col>
+            </row>
+            <row style="margin-top:10px;">
+                <i-col>
+                    是否显示
+                </i-col>
+                <i-col>
+                    <i-switch v-model="previewData.display" :true-value='1' :false-value='0' @on-change="" />
+                </i-col>
+            </row>
+        </Modal>
     </div>
 </template>
 
 <script>
 import axios from "@/libs/api.request";
+import Cookies from "js-cookie";
 export default {
     data() {
         return {
@@ -45,10 +91,10 @@ export default {
                                     trueValue: 1,
                                     falseValue: 0,
                                     value: params.row.display
-                                },  
+                                },
                                 nativeOn: {
                                     click: () => {
-                                        console.log(1);
+                                        this.changeDisplay(params.row.id);
                                     }
                                 }
                             },
@@ -73,10 +119,9 @@ export default {
                                     },
                                     nativeOn: {
                                         click: () => {
-                                            this.isNew = false;
-                                            this.openNew(true);
-                                            this.editTagId = params.row.id;
-                                            this.newTagName = params.row.name;
+                                            this.getGroupPic(params.row.id);
+                                            this.groupId = params.row.id;
+                                            this.openGroundPic(true);
                                         }
                                     }
                                 },
@@ -109,8 +154,32 @@ export default {
 
             groundIsNew: true,
             newGroundReview: false,
-            newGroudName: ""
+            newGroudName: "",
+
+            groupId: "",
+            groundPic: false,
+            defaultList: [
+                {
+                    id:1,
+                    display: 1,
+                    group: 1,
+                    name: "未命名",
+                    image:
+                        "http://p8r2g6z46.bkt.clouddn.com/20181013/7c18da85a30ae258c19b1a0a1d5e3c98.jpg",
+                    remake: "未备注",
+                    url: "www.rdoorweb.com"
+                }
+            ],
+            previewData:'',
+            picData:false
         };
+    },
+    computed: {
+        headers() {
+            return {
+                token: Cookies.get("token")
+            };
+        }
     },
     methods: {
         getLunboGround() {
@@ -120,14 +189,36 @@ export default {
                     method: "get"
                 })
                 .then(res => {
-                    console.log(res);
-
                     this.receivedData = res.data;
                 });
         },
         openNewGround(i) {
             this.newGroundReview = i;
         },
+        openGroundPic(i) {
+            this.groundPic = i;
+        },
+        openPicData(i){
+            this.openGroundPic(!i)
+            this.picData = i;
+        },
+        //getGroupPic
+        getGroupPic(id) {
+            axios
+                .request({
+                    url: "swiper_groups/" + id,
+                    method: "get"
+                })
+                .then(res => {
+                    // this.defaultList = res.data;
+                    // if (this.defaultList === null) {
+                    //     this.defaultList = [];
+                    // }
+                    // this.defaultList = [];
+                    console.log(res);
+                });
+        },
+
         //newLunboGround
         newLunboGround() {
             if (this.newGroudName === "") {
@@ -139,13 +230,82 @@ export default {
                     url: "swiper_groups",
                     method: "post",
                     data: {
-                        display:0,
+                        display: 0,
                         name: this.newGroudName
                     }
                 })
                 .then(res => {
                     this.$Message.success("success");
                     this.getLunboGround();
+                });
+        },
+        ///changeDisplay
+        changeDisplay(id) {
+            axios
+                .request({
+                    url: "swiper_groups/" + id + "/change",
+                    method: "get"
+                })
+                .then(res => {
+                    this.$Message.success("success");
+                    this.getLunboGround();
+                });
+        },
+
+        //successUpload
+        successUpload(file) {
+            this.inputGroup(file);
+        },
+
+        //提交groupPic
+        // data
+        // msg: "上传成功"
+        // status: "success"
+        // url: "http://p8r2g6z46.bkt.clouddn.com/20181013/7c18da85a30ae258c19b1a0a1d5e3c98.jpg"
+        inputGroup(data) {
+            this.defaultList.push({
+                display: 1,
+                group: this.groupId,
+                name: "未命名",
+                image: data.url,
+                remake: "未备注",
+                url: "www.rdoorweb.com"
+            });
+            axios
+                .request({
+                    url: "swiper_groups",
+                    method: "post",
+                    data: {
+                        display: 1,
+                        group: this.groupId,
+                        name: "未命名",
+                        image: data.url,
+                        remake: "未备注",
+                        url: "www.rdoorweb.com"
+                    }
+                })
+                .then(res => {
+                    this.$Message.success("success");
+                    this.getGroupPic(this.groupId);
+                });
+        },
+
+        //clickPic
+        previewUpload(file){
+            this.previewData = file
+            this.openPicData(true)
+            console.log(file);
+        },
+        inputData(){
+            axios
+                .request({
+                    url: "swipers/"+this.previewData.id,
+                    method: "put",
+                    data: this.previewData
+                })
+                .then(res => {
+                    this.$Message.success("success");
+                    this.getGroupPic(this.groupId);
                 });
         }
     },

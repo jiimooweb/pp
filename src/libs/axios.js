@@ -48,10 +48,10 @@ class httpRequest {
       }
       // console.log(data.code);
       if (data.code === 401) {
-        Cookies.remove(TOKEN_KEY)
-        window.location.href = '/login'
-        Message.error('未登录，或登录失效，请登录')
-        return false
+        // Cookies.remove(TOKEN_KEY)
+        // window.location.href = '/login'
+        // Message.error('未登录，或登录失效，请登录')
+        return
       }
       /*
       if (data.code !== 200) {
@@ -78,7 +78,7 @@ class httpRequest {
       */
       // Message.error('服务内部错误')
       // 对响应错误做点什么
-      Cookies.remove(TOKEN_KEY)
+      // Cookies.remove(TOKEN_KEY)
         // window.location.href = '/login'
         Message.error(error.request)
         Message.error('未登录，或登录失效，请登录')
