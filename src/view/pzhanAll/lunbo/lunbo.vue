@@ -1,15 +1,15 @@
 <template>
     <div>
         <row>
-            <i-col style="width:600px;height:300px; float:left;">
+            <i-col style="width:640px;height:480px; float:left;margin-bottom:20px;margin-right:20px;">
                 <Carousel v-model="value" loop>
                     <CarouselItem v-for="item in defaultList">
-                        <div class="demo-carousel" :style="'width:600px;height:300px;background:url('+item.image+') no-repeat center  '"></div>
+                        <img :src="item.image" width="640px" height="480px" style="">
                     </CarouselItem>
                 </Carousel>
             </i-col>
-            <i-col style="width:600px; float:left;margin-left:20px;">
-                <i-button @click="openNewGround(true)">新增</i-button>
+            <i-col style="width:600px; float:left;">
+                <i-button @click="openNewGround(true)" style='margin-bottom:10px;'>新增</i-button>
                 <i-table style="width:500px;" :columns="receivedColumn" :data="receivedData"></i-table>
             </i-col>
         </row>
@@ -26,9 +26,19 @@
         <Modal v-model="groundPic" title="编辑轮播组图片" @on-ok="" @on-cancel="openGroundPic(false)">
             <row>
                 <i-col>
-                    <Upload action="http://localhost:8000/qiniu/upload" :on-success='successUpload' :on-preview='previewUpload' :show-upload-list='true' :default-file-list="defaultList" :headers="headers">
+                    <Upload action="http://localhost:8000/qiniu/upload" :on-success='successUpload' :on-preview='previewUpload' :show-upload-list='false' :default-file-list="defaultList" :headers="headers">
                         <Button icon="ios-cloud-upload-outline">上传图片</Button>
                     </Upload>
+                </i-col>
+                <i-col>
+                    <div style="width:100%;height:600px;margin-top:10px;border:1px solid #ddd;overflow-y:scroll;overflow-x:hidden;">
+                        <div v-for='(item,index) in defaultList' :key="index" @click="previewUpload(index)" style="border:1px solid #eee;width:224px;height:224px;float:left;margin:10px 5px 0;overflow:hidden;position:relative;">
+                            <span @click.stop="openDeletePic(true,index)" style="position:absolute;margin-top:0;margin:left;background:#aaa;color:#fff;display:block;width:20px;height:20px;line-height:20px;text-align:center;cursor: pointer">
+                                ╳
+                            </span>
+                            <img :src="item.image" height="100%" style="display:block;margin:0 auto;">
+                        </div>
+                    </div>
                 </i-col>
             </row>
             <div slot="footer">
@@ -65,6 +75,14 @@
                 </i-col>
                 <i-col>
                     <i-switch v-model="previewData.display" :true-value='1' :false-value='0' @on-change="" />
+                </i-col>
+            </row>
+        </Modal>
+        <Modal v-model="deleteModal" title="删除" @on-ok="deletePic()" @on-cancel="openDeletePic(false)">
+            <row>
+                <i-col style="margin:0 auto;">
+                    是否删除该图片
+                    <!-- ---  <span style="color:red;">{{removeName}}</span> ---- -->
                 </i-col>
             </row>
         </Modal>
@@ -148,6 +166,8 @@ export default {
                     }
                 }
             ],
+            displayDataId:'',
+
             receivedData: [],
             reviewTitle: "新增组",
             lunboList: [],
@@ -158,20 +178,16 @@ export default {
 
             groupId: "",
             groundPic: false,
-            defaultList: [
-                {
-                    id:1,
-                    display: 1,
-                    group: 1,
-                    name: "未命名",
-                    image:
-                        "http://p8r2g6z46.bkt.clouddn.com/20181013/7c18da85a30ae258c19b1a0a1d5e3c98.jpg",
-                    remake: "未备注",
-                    url: "www.rdoorweb.com"
-                }
-            ],
+            defaultList: [{
+                
+            },{
+
+            }],
             previewData:'',
-            picData:false
+            picData:false,
+
+            deleteModal:false,
+            deleteId:''
         };
     },
     computed: {
@@ -190,6 +206,12 @@ export default {
                 })
                 .then(res => {
                     this.receivedData = res.data;
+                    for(let i=0;i<this.receivedData.length;i++){
+                        console.log(this.receivedData[i].display);
+                        if(this.receivedData[i].display === 1){
+                            this.getGroupPic(this.receivedData[i].id)
+                        }
+                    }
                 });
         },
         openNewGround(i) {
@@ -202,6 +224,15 @@ export default {
             this.openGroundPic(!i)
             this.picData = i;
         },
+        openDeletePic(i,index){
+            this.deleteModal = i
+            if(i){
+                this.deleteId = this.defaultList[index].id
+            }
+        },
+
+
+
         //getGroupPic
         getGroupPic(id) {
             axios
@@ -210,12 +241,20 @@ export default {
                     method: "get"
                 })
                 .then(res => {
-                    // this.defaultList = res.data;
-                    // if (this.defaultList === null) {
-                    //     this.defaultList = [];
+                    this.defaultList = res.data.swipers
+                    
+
+                    // for(let i=0;i<res.data.swipers.length;i++){
+                    //     this.defaultList.push({
+                    //         name:i,
+                    //         url:res.data.swipers.image
+                    //     })
                     // }
-                    // this.defaultList = [];
-                    console.log(res);
+                    console.log(this.defaultList);
+                    
+                    if (this.defaultList === null) {
+                        this.defaultList = [];
+                    }
                 });
         },
 
@@ -263,17 +302,9 @@ export default {
         // status: "success"
         // url: "http://p8r2g6z46.bkt.clouddn.com/20181013/7c18da85a30ae258c19b1a0a1d5e3c98.jpg"
         inputGroup(data) {
-            this.defaultList.push({
-                display: 1,
-                group: this.groupId,
-                name: "未命名",
-                image: data.url,
-                remake: "未备注",
-                url: "www.rdoorweb.com"
-            });
             axios
                 .request({
-                    url: "swiper_groups",
+                    url: "swipers",
                     method: "post",
                     data: {
                         display: 1,
@@ -291,10 +322,11 @@ export default {
         },
 
         //clickPic
-        previewUpload(file){
-            this.previewData = file
+        previewUpload(index){
+            this.previewData = this.defaultList[index]
             this.openPicData(true)
-            console.log(file);
+            console.log(index);
+            
         },
         inputData(){
             axios
@@ -302,6 +334,21 @@ export default {
                     url: "swipers/"+this.previewData.id,
                     method: "put",
                     data: this.previewData
+                })
+                .then(res => {
+                    this.$Message.success("success");
+                    this.openGroundPic(true)
+                    this.getGroupPic(this.groupId);
+                });
+        },
+
+
+        // deletePic
+        deletePic(index){
+                axios
+                .request({
+                    url: "swipers/"+this.deleteId,
+                    method: "delete"
                 })
                 .then(res => {
                     this.$Message.success("success");

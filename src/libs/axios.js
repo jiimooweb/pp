@@ -80,8 +80,8 @@ class httpRequest {
       // 对响应错误做点什么
       // Cookies.remove(TOKEN_KEY)
         // window.location.href = '/login'
-        Message.error(error.request)
-        Message.error('未登录，或登录失效，请登录')
+        Message.error('发生未知错误,请按f12查看network')
+        // Message.error('未登录，或登录失效，请登录')
       // return Promise.reject(error)
     })
     

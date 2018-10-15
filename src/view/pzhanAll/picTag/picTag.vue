@@ -7,6 +7,9 @@
             <i-col style="margin-top:20px;">
                 <i-table style="min-width:1200px;" :columns="receivedColumn" :data="receivedData"></i-table>
             </i-col>
+            <i-col style="margin-top:20px;">
+                <Page :total="total" :page-size="per_page" :on-change='changePage()'/>
+            </i-col>
         </row>
         <Modal v-model="newModal" :title="reviewTitle" @on-ok="newTag" @on-cancel="openNew(false)">
             <row>
@@ -33,6 +36,9 @@ import axios from "@/libs/api.request";
 export default {
     data() {
         return {
+            total:1,
+            per_page:50,
+            currentPage:1,
             receivedColumn: [
                 {
                     title: "tagId",
@@ -98,13 +104,19 @@ export default {
         };
     },
     methods: {
-        getTags() {
+        changePage(index){
+            this.currentPage = index
+        },
+        getTags(currentPage) {
             axios
                 .request({
-                    url: "tags",
+                    url: "tags?page="+currentPage,
                     method: "get"
                 })
                 .then(res => {
+                    this.total = res.data.total
+                    this.per_page = res.data.per_page
+                    
                     this.receivedData = []
                     for (var i in res.data.data) {
                         this.receivedData.push(res.data.data[i]); 
@@ -137,7 +149,7 @@ export default {
                         .then(res => {
                             this.isNew = true;
                             this.$Message.success("success");
-                            this.getTags();
+                            this.getTags(this.currentPage);
                         });
                 }else{
                     this.$Message.error("tag名不能为空");
@@ -161,7 +173,7 @@ export default {
                     .then(res => {
                         this.isNew = true;
                         this.$Message.success("success");
-                        this.getTags();
+                        this.getTags(this.currentPage);
                     });
             }else{
                 this.$Message.error("tag名不能为空");
@@ -183,12 +195,12 @@ export default {
                 .then(res => {
                     this.isNew = true;
                     this.$Message.success("success");
-                    this.getTags();
+                    this.getTags(this.currentPage);
                 });
         }
     },
     mounted() {
-        this.getTags();
+        this.getTags(this.currentPage);
     }
 };
 </script>
