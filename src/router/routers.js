@@ -47,6 +47,27 @@ export default [
                     icon: 'ios-paper-outline'
                 },
                 component: () => import('@/view/pzhanAll/dayRec/dayRec.vue')
+            },{
+                path: 'topic',
+                name: '专题',
+                meta: {
+                    icon: 'ios-paper-outline'
+                },
+                component: () => import('@/view/pzhanAll/topic/topic.vue')
+            },{
+                path: 'comment',
+                name: '评论管理',
+                meta: {
+                    icon: 'ios-paper-outline'
+                },
+                component: () => import('@/view/pzhanAll/comment/comment.vue')
+            },{
+                path: 'blackList',
+                name: '黑名单',
+                meta: {
+                    icon: 'ios-paper-outline'
+                },
+                component: () => import('@/view/pzhanAll/blackList/blackList.vue')
             }, {
                 path: 'picTag',
                 name: '图片标签管理',
@@ -68,6 +89,13 @@ export default [
                     icon: 'ios-paper-outline'
                 },
                 component: () => import('@/view/pzhanAll/lunbo/lunbo.vue')
+            }, {
+                path: 'signIn',
+                name: '登录奖励',
+                meta: {
+                    icon: 'ios-paper-outline'
+                },
+                component: () => import('@/view/pzhanAll/signIn/signIn.vue')
             }, {
                 path: 'userManage',
                 name: '用户管理',

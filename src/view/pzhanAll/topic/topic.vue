@@ -4,12 +4,8 @@
             <i-col span='5'>
                 <i-button style="margin-top: 10px;" type="primary" @click='oNew()'>新建</i-button>
             </i-col>
-            <i-col style="margin-top: 10px;text-align:right;" span='19'>
-                <DatePicker type="date" value-format="yyyy-MM-dd" format='yyyy-MM-dd' @on-change='returnTodayDate' placeholder="选择日期" style="width: 200px"></DatePicker>
-                <i-button style="margin-left: 10px;" type="primary" @click='searchDate()'>搜索</i-button>
-            </i-col>
             <i-col span='24'>
-                <i-table style="width:100%;min-width:600px;margin-top:30px;" :columns="dayColumn" :data="dayList"></i-table>
+                <i-table style="width:100%;min-width:600px;margin-top:30px;" :columns="topicColumn" :data="topicList"></i-table>
             </i-col>
         </row>
         <Modal style="width:500px;" v-model="newModal" :title="picModalTitle" @on-ok="inputData()" @on-cancel="cleanData()">
@@ -31,10 +27,10 @@
             </row>
             <row style="margin-bottom:20px;">
                 <i-col>
-                    日期
+                    开关
                 </i-col>
                 <i-col>
-                    <DatePicker type="date" v-model="picData.date" value-format="yyyy-MM-dd" format='yyyy-MM-dd' :options="picDataOptions" @on-change='picData.date=$event' placeholder="选择日期"></DatePicker>
+                    <i-switch v-model="picData.switch" :true-value='1' :false-value='0' @on-change="" />
                 </i-col>
             </row>
             <row style="margin-bottom:20px;">
@@ -54,21 +50,21 @@
                 </i-col>
             </row>
         </Modal>
-        <Modal v-model="reviewModal" title="预览大图" :footer-hide='true'>
+        <!-- <Modal v-model="reviewModal" title="预览大图" :footer-hide='true'>
             <row>
                 <i-col style="margin:0 auto;">
                     <img :src="reviewPic" width="100%">
                 </i-col>
             </row>
-        </Modal>
-        <Modal v-model="deleteModal" title="删除" @on-ok="removePic()" @on-cancel="openDelete(false)">
+        </Modal> -->
+        <Modal v-model="deleteModal" title="删除" @on-ok="removeTopic()" @on-cancel="openDelete(false)">
             <row>
                 <i-col style="margin:0 auto;">
-                    <p style="font-size:25px;color:red;text-align:center;">是否删除图片</p><img width="100%" :src="deleteUrl">
+                    <p style="font-size:25px;text-align:center;">是否删除专题 ---- <span style="color:red;">{{deleteTitle}}</span> ----</p>
                 </i-col>
             </row>
         </Modal>
-        <selectPic :oneOrAll='0' :hasSelect='picData.img_id' @listenToparent='returnSelectPic' ref="selectPicModal"></selectPic>
+        <selectPic :oneOrAll='1' :hasSelect='picData.img_id' @listenToparent='returnSelectPic' ref="selectPicModal"></selectPic>
     </div>
 </template>
 
@@ -79,8 +75,7 @@ export default {
     components: { selectPic },
     data() {
         return {
-            dayDate: "",
-            picModalTitle: "新增图片",
+            picModalTitle: "新增专题",
             newModal: false,
 
             reviewModal:false,
@@ -89,7 +84,7 @@ export default {
             currentId:'',
 
             deleteModal:false,
-            deleteUrl:'',
+            deleteTitle:'',
 
             selectPicModal: false,
             picData: {
@@ -98,29 +93,7 @@ export default {
                 date: "",
                 img_id: []
             },
-            dayColumn: [
-                {
-                    title: "缩略图",
-                    width:100,
-                    render: (h, params) => {
-                        return h(
-                            "img",
-                            {
-                                attrs: {
-                                    src: params.row.picture.url+'?imageMogr2/auto-orient/thumbnail/x50/blur/1x0/quality/75',
-                                    style: "width:50px;height:50px;"
-                                },
-                                on:{
-                                    click: () => {
-                                        this.reviewPic = params.row.picture.url
-                                        this.openreviewModal(true)
-                                    }
-                                }
-                            },
-                            ""
-                        );
-                    }
-                },
+            topicColumn: [
                 {
                     title: "标题",
                     key: "title"
@@ -130,14 +103,25 @@ export default {
                     key: "text"
                 },
                 {
-                    title: "日期",
-                    width:100,
-                    key: "date"
-                },
-                {
-                    title: "点赞",
-                    width:100,
-                    key: "today_likes_count"
+                    title:'显示',
+                    render: (h, params) => {
+                        return h(
+                            "i-switch",
+                            {
+                                props: {
+                                    trueValue: 1,
+                                    falseValue: 0,
+                                    value: params.row.switch
+                                },
+                                nativeOn: {
+                                    click: () => {
+                                        this.changeSwitch(params.row.id,params.row.switch);
+                                    }
+                                }
+                            },
+                            0
+                        );
+                    }
                 },
                 {
                     title: "编辑",
@@ -153,21 +137,14 @@ export default {
                                     },
                                     nativeOn: {
                                         click: () => {
-                                            this.oEdit()
-                                            this.currentId = params.row.id,
+                                            
+                                            this.currentId = params.row.id
                                             this.picData = {
                                                 title: params.row.title,
                                                 text: params.row.text,
-                                                date: params.row.date,
-                                                img_id: [
-                                                    {
-                                                        url:params.row.picture.url,
-                                                        id:params.row.picture.id
-                                                    }
-                                                ]
+                                                switch: params.row.switch
                                             }
-                                            console.log(this.picData.date);
-                                            
+                                            this.getTopicDetail()
                                         }
                                     }
                                 },
@@ -184,7 +161,7 @@ export default {
                                         click: () => {
                                             this.openDelete(true)
                                             this.currentId = params.row.id
-                                            this.deleteUrl = params.row.picture.url
+                                            this.deleteTitle = params.row.title
                                         }
                                     }
                                 },
@@ -194,7 +171,7 @@ export default {
                     }
                 }
             ],
-            dayList: [],
+            topicList: [],
             picDataOptions: {
                 // disabledDate(date) {
                 //     return date && date.valueOf() < Date.now();
@@ -205,7 +182,9 @@ export default {
     methods: {
         //SelectPic组件事件
         returnSelectPic(res) {
-            this.picData.img_id = res;
+            this.picData.img_id = res
+            this.openNew(false)
+            this.openNew(true)
         },
 
         openNew(i) {
@@ -216,7 +195,7 @@ export default {
                 this.picData = {
                     title: '',
                     text: '',
-                    date: '',
+                    switch: '',
                     img_id: []
                 }
             }
@@ -253,89 +232,121 @@ export default {
                     this.dayList = res.data;
                 });
         },
-        removePic(){
+        removeTopic(){
             axios
                 .request({
-                    url: "todays/delete",
+                    url: "specials/"+this.currentId,
+                    method: "delete"
+                }).then(res=>{
+                    this.getTopic()
+                    this.$Message.success("success");
+                })
+        },
+        changeSwitch(a,b){
+            axios
+                .request({
+                    url: "specials/switch",
                     method: "post",
-                    data: {
-                        ids:[this.currentId]
+                    data:{
+                        id:a,
+                        switch:b===0?1:0
                     }
                 }).then(res=>{
-                    this.getToday()
+                    this.getTopic()
                     this.$Message.success("success");
                 })
         },
         inputData() {
             if(this.isNew){
+                let imgL = []
+                for(let i=0;i<this.picData.img_id.length;i++){
+                    imgL.push(this.picData.img_id[i].id)
+                }
                 axios
                 .request({
-                    url: "todays",
+                    url: "specials",
                     method: "post",
                     data: {
                         title: this.picData.title,
-                        img_id: this.picData.img_id[0].id,
                         text: this.picData.text,
-                        date: this.picData.date
+                        switch: this.picData.switch,
+                        img_id: imgL
                     }
                 })
                 .then(res => {
                     this.picData = {
                         title: "",
                         text: "",
-                        date: "",
+                        switch: 1,
                         img_id: []
                     },
                     this.$Message.success("success");
+                    this.getTopic()
                 });
             }else{
+                let imgL = []
+                for(let i=0;i<this.picData.img_id.length;i++){
+                    imgL.push(this.picData.img_id[i].id)
+                }
                 axios
                 .request({
-                    url: "todays/"+this.currentId,
+                    url: "specials/"+this.currentId,
                     method: "put",
                     data: {
                         title: this.picData.title,
-                        img_id: this.picData.img_id[0].id,
                         text: this.picData.text,
-                        date: this.picData.date
+                        switch: this.picData.switch,
+                        img_id: imgL
                     }
                 })
                 .then(res => {
                     this.picData = {
                         title: "",
                         text: "",
-                        date: "",
+                        switch: "",
                         img_id: []
                     },
                     this.$Message.success("success");
+                    this.getTopic()
                 });
             }
             
         },
 
-        getToday(){
+        getTopic(){
             axios
                 .request({
-                    url: "todays",
+                    url: "specials",
                     method: "get"
                 })
                 .then(res => {
-                    // console.log(res.data.data);
+                    this.topicList = res.data.data;
                     
-                    this.dayList = res.data.data;
                 });
         },
 
-        returnTodayDate(time){
-            this.dayDate = time
-        },
-
-        returnPicDate(time){
-            this.picData.date = time
+        getTopicDetail(){
+            axios
+                .request({
+                    url: "specials/"+this.currentId,
+                    method: "get"
+                })
+                .then(res => {
+                    let imgl = []
+                    for(let i=0;i<res.data.imgs.length;i++){
+                        imgl.push({
+                            url:res.data.imgs[i].url,
+                            id:res.data.imgs[i].id
+                        })
+                    }
+                    this.picData.img_id = imgl
+                    this.oEdit()
+                    console.log(this.picData);
+                });
         }
     },
     mounted() {
-        this.getToday()
+        this.getTopic()
     }
 };
 </script>

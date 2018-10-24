@@ -1,17 +1,20 @@
 <template>
     <div>
         <row>
-            <i-col>
-                <i-button type="primary" @click='openNew(true)'>新增图片</i-button>
+            <i-col style="margin-bottom:20px;">
+                <i-button type="primary" @click='oNew()'>新增图片</i-button>
             </i-col>
+            <i-col>
+                <matterSearch @listenToparent='returnMatterSearch' ref="matterSearch"></matterSearch>
+            </i-col>
+            <!-- <i-col style="margin-top:20px;">
+                <Page :total="total" :page-size="per_page" :on-change='changePage()' />
+            </i-col> -->
             <i-col style="margin-top:10px;">
                 <i-table style="width:100%;min-width:600px;" :columns="picColumn" :data="picList"></i-table>
             </i-col>
-            <i-col style="margin-top:20px;">
-                <Page :total="total" :page-size="per_page" :on-change='changePage()' />
-            </i-col>
         </row>
-        <Modal v-model="newModal" :title="picModalTitle" @on-ok="inputPic()" @on-cancel="openNew(false)">
+        <Modal v-model="newModal" :title="picModalTitle" @on-ok="inputPic()" @on-cancel="oEdit()">
             <row style="margin-bottom:20px;">
                 <i-col>
                     标题
@@ -33,7 +36,7 @@
                     ID
                 </i-col>
                 <i-col>
-                    <Input v-model="picData.id" />
+                    <Input v-model="picData.pic_id" />
                 </i-col>
             </row>
             <row style="margin-bottom:20px;">
@@ -46,10 +49,7 @@
             </row>
             <row style="margin-bottom:20px;">
                 <i-col>
-                    图片
-                </i-col>
-                <i-col>
-                    <Upload action="http://localhost:8000/qiniu/upload" :on-success='successUpload' :show-upload-list='false' :headers="headers">
+                    <Upload  style="margin-bottom:10px;" action="http://192.168.31.163:8000/qiniu/upload" :on-success='successUpload' :show-upload-list='false' :headers="headers">
                         <Button icon="ios-cloud-upload-outline">上传图片</Button>
                     </Upload>
                     <img :src="picData.url" width="200px">
@@ -66,6 +66,14 @@
                     <!-- <Input v-model="tagsList" /> -->
                 </i-col>
             </row>
+            <row style="margin-bottom:20px;">
+                <i-col span='10'>
+                    <Input v-model="newTag"/>
+                </i-col>
+                <i-col span='10' offset='1'>
+                    <i-button type="primary" @click='oNewTag(true)'>新建标签</i-button>
+                </i-col>
+            </row>
         </Modal>
         <Modal v-model="deleteModal" title="删除" @on-ok="removePic()" @on-cancel="openDelete(false)">
             <row>
@@ -74,9 +82,16 @@
                 </i-col>
             </row>
         </Modal>
-        <Modal v-model="reviewModal" title="预览大图" :footer-hide='true'>
+        <Modal v-model="tagModal" title="新建标签" @on-ok="inputNewTag()" @on-cancel="oNewTag(false)">
             <row>
                 <i-col style="margin:0 auto;">
+                    <p style="font-size:25px;text-align:center;">是否添加标签---<span style="color:red"> {{newTag}} </span>---</p>
+                </i-col>
+            </row>
+        </Modal>
+        <Modal v-model="reviewModal" width='800px' title="预览大图" :footer-hide='true'>
+            <row>
+                <i-col style="margin:0 auto;height:700px;overflow-y:scroll;">
                     <img :src="reviewPic" width="100%">
                 </i-col>
             </row>
@@ -87,15 +102,20 @@
 <script>
 import axios from "@/libs/api.request";
 import Cookies from "js-cookie";
+import matterSearch from "@/components/matterSearch";
 export default {
+    components: { matterSearch },
     data() {
         return {
             total: 1,
             per_page: 30,
             currentPage: 1,
-
+            index:1,
             reviewPic:'',
+            
 
+            newTag:'',
+            tagModal:false,
 
             picModalTitle: "新增图片",
             newModal: false,
@@ -113,7 +133,7 @@ export default {
 
             currentId: "",
             picData: {
-                id: "",
+                pic_id: "",
                 title: "",
                 url: "",
                 author: "",
@@ -142,13 +162,15 @@ export default {
                 },
                 {
                     title: "缩略图",
+                    align: 'center',
+                    width:100,
                     render: (h, params) => {
                         return h(
                             "img",
                             {
                                 attrs: {
                                     src: params.row.url+'?imageMogr2/auto-orient/thumbnail/x50/blur/1x0/quality/75',
-                                    style: "width:50px;height:50px;"
+                                    style: "height:50px;margin:0 auto;display:block;"
                                 },
                                 on:{
                                     click: () => {
@@ -163,26 +185,33 @@ export default {
                 },
                 {
                     title: "作者",
+                    width:200,
+                    align:'center',
                     key: "author"
                 },
                 {
-                    title: "id",
+                    title: "作品ID",
+                    width:100,
                     key: "pic_id"
                 },
                 {
                     title: "点赞",
+                    width:100,
                     key: "like"
                 },
                 {
                     title: "收藏",
+                    width:100,
                     key: "collect"
                 },
                 {
                     title: "浏览",
+                    width:100,
                     key: "click"
                 },
                 {
                     title: "编辑",
+                    width:200,
                     render: (h, params) => {
                         return h("div", [
                             h(
@@ -199,7 +228,8 @@ export default {
                                             for(let i=0;i<params.row.tags.length;i++){
                                                 this.selectTags.push(params.row.tags[i].id)
                                             }
-                                            console.log(this.selectTags);
+                                            this.picData.id = params.row.pic_id
+                                            
                                             
                                             this.openNew(true);
                                             this.picData = params.row;
@@ -243,8 +273,32 @@ export default {
         };
     },
     methods: {
-        //open
+        //matterSearch组件事件
+        returnMatterSearch(res) {
+            this.picList = res.data.data
+            // this.total = parseInt(res.data.total);
+        },
 
+        //open
+        //新建图片窗口
+        oNew(){
+            this.isNewPic = true
+            this.openNew(true)
+        },
+        oEdit(){
+            this.isNewPic = false
+            this.openNew(false)
+        },
+        // 新建tag窗口
+        oNewTag(i){
+            if(this.newTag === ''){
+                this.$Message.error("标签名不能为空");
+                return
+            }
+            this.tagModal = i
+        },
+
+        //编辑图片窗口
         openNew(i) {
             if (this.isNewPic) {
                 this.picModalTitle = "新增图片";
@@ -255,6 +309,7 @@ export default {
                     author: "",
                     click: ""
                 };
+                this.selectTags = []
                 this.currentId = [];
             } else {
                 this.picModalTitle = "编辑图片";
@@ -280,6 +335,7 @@ export default {
             this.deleteModal = i
         },
         changePage(index) {
+            // console.log(123);
             this.currentPage = index;
         },
         tagChangePage(index){
@@ -288,18 +344,31 @@ export default {
         openreviewModal(i){
             this.reviewModal = i
         },
+
+        //上传新标签
+        inputNewTag(){
+                axios
+                        .request({
+                            url: "tags",
+                            method: "post",
+                            data: {
+                                name: this.newTag
+                            }
+                        })
+                        .then(res => {
+                            this.newTag = ''
+                            this.$Message.success("success");
+                            this.getTags();
+                        },res=>{
+                            this.$Message.error("失败或标签名重复");
+                        });
+        },
+
+
         //getPic
         getPic() {
-            axios
-                .request({
-                    url: "pictures?page=" + this.currentPage,
-                    method: "get"
-                })
-                .then(res => {
-                    // console.log(res.data);
-                    this.picList = res.data.data;
-                    this.selectTags = []
-                });
+            this.$refs.matterSearch.submitSearch()
+            this.selectTags = []
         },
         //successUpload
         successUpload(file) {
@@ -326,7 +395,7 @@ export default {
                         method: "post",
                         data: {
                             picture: {
-                                pic_id: this.picData.id,
+                                pic_id: this.picData.pic_id,
                                 title: this.picData.title,
                                 url: this.picData.url,
                                 author: this.picData.author,
@@ -347,7 +416,7 @@ export default {
                         method: "put",
                         data: {
                             picture: {
-                                pic_id: this.picData.id,
+                                pic_id: this.picData.pic_id,
                                 title: this.picData.title,
                                 url: this.picData.url,
                                 author: this.picData.author,

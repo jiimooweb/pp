@@ -5,10 +5,10 @@
                 <i-button type="primary" @click='openNew(true)'>新增Tag</i-button>
             </i-col>
             <i-col style="margin-top:20px;">
-                <i-table style="min-width:1200px;" :columns="receivedColumn" :data="receivedData"></i-table>
+                <Page :total="total" :page-size="per_page" @on-change='changePage'/>
             </i-col>
             <i-col style="margin-top:20px;">
-                <Page :total="total" :page-size="per_page" :on-change='changePage()'/>
+                <i-table style="min-width:1200px;" :columns="receivedColumn" :data="receivedData"></i-table>
             </i-col>
         </row>
         <Modal v-model="newModal" :title="reviewTitle" @on-ok="newTag" @on-cancel="openNew(false)">
@@ -106,6 +106,7 @@ export default {
     methods: {
         changePage(index){
             this.currentPage = index
+            this.getTags(this.currentPage)
         },
         getTags(currentPage) {
             axios
