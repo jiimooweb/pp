@@ -181,9 +181,9 @@ export default {
      */
     try {
       this.setTagNavList([
-        {"name":"每日推荐",
-        "path":"/pzhanAll/dayRec",
-        "meta":{"icon":"ios-list-box-outline","title":"每日推荐"}
+        {"name":"图片管理",
+        "path":"/pzhanAll/picManage",
+        "meta":{"icon":"ios-list-box-outline","title":"图片管理"}
         }
       ]);
     } catch (error) {

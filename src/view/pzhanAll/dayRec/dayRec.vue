@@ -26,7 +26,7 @@
                     文本
                 </i-col>
                 <i-col>
-                    <Input v-model="picData.text" />
+                    <Input type="textarea"v-model="picData.text" />
                 </i-col>
             </row>
             <row style="margin-bottom:20px;">
@@ -286,6 +286,7 @@ export default {
                         date: "",
                         img_id: []
                     },
+                    this.getToday()
                     this.$Message.success("success");
                 });
             }else{
@@ -307,6 +308,7 @@ export default {
                         date: "",
                         img_id: []
                     },
+                    this.getToday()
                     this.$Message.success("success");
                 });
             }

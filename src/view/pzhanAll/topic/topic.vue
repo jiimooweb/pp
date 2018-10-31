@@ -19,6 +19,18 @@
             </row>
             <row style="margin-bottom:20px;">
                 <i-col>
+                    <i-button style="margin-top: 10px;" type="primary" @click='openSelect(0)'>选择封面</i-button>
+                </i-col>
+                <i-col>
+                    <div style="width:100%;height:230px;overflow-y:scroll;margin-top:20px;">
+                        <div v-for='item in picData.cover' style="float:left;width:230px;overflow:hidden;">
+                            <img :src="item.url" height="230" style="display:block;margin:0 auto;">
+                        </div>
+                    </div>
+                </i-col>
+            </row>
+            <row style="margin-bottom:20px;">
+                <i-col>
                     文本
                 </i-col>
                 <i-col>
@@ -38,7 +50,7 @@
                     图片
                 </i-col> -->
                 <i-col>
-                    <i-button style="margin-top: 10px;" type="primary" @click='openSelect()'>选择图片</i-button>
+                    <i-button style="margin-top: 10px;" type="primary" @click='openSelect(1)'>选择图片</i-button>
                     <!-- <Input v-model="picData.img_id" /> -->
                 </i-col>
                 <i-col>
@@ -60,11 +72,12 @@
         <Modal v-model="deleteModal" title="删除" @on-ok="removeTopic()" @on-cancel="openDelete(false)">
             <row>
                 <i-col style="margin:0 auto;">
-                    <p style="font-size:25px;text-align:center;">是否删除专题 ---- <span style="color:red;">{{deleteTitle}}</span> ----</p>
+                    <p style="font-size:25px;text-align:center;">是否删除专题 ----
+                        <span style="color:red;">{{deleteTitle}}</span> ----</p>
                 </i-col>
             </row>
         </Modal>
-        <selectPic :oneOrAll='1' :hasSelect='picData.img_id' @listenToparent='returnSelectPic' ref="selectPicModal"></selectPic>
+        <selectPic :oneOrAll='isCover' :hasSelect='isCover===0?picData.cover:picData.img_id' @listenToparent='returnSelectPic' ref="selectPicModal"></selectPic>
     </div>
 </template>
 
@@ -78,20 +91,22 @@ export default {
             picModalTitle: "新增专题",
             newModal: false,
 
-            reviewModal:false,
-            reviewPic:'',
-            isNew:true,
-            currentId:'',
+            reviewModal: false,
+            reviewPic: "",
+            isNew: true,
+            currentId: "",
 
-            deleteModal:false,
-            deleteTitle:'',
+            deleteModal: false,
+            deleteTitle: "",
 
             selectPicModal: false,
+            isCover: 0,
             picData: {
                 title: "",
                 text: "",
                 date: "",
-                img_id: []
+                img_id: [],
+                cover: []
             },
             topicColumn: [
                 {
@@ -103,7 +118,7 @@ export default {
                     key: "text"
                 },
                 {
-                    title:'显示',
+                    title: "显示",
                     render: (h, params) => {
                         return h(
                             "i-switch",
@@ -115,7 +130,10 @@ export default {
                                 },
                                 nativeOn: {
                                     click: () => {
-                                        this.changeSwitch(params.row.id,params.row.switch);
+                                        this.changeSwitch(
+                                            params.row.id,
+                                            params.row.switch
+                                        );
                                     }
                                 }
                             },
@@ -125,7 +143,7 @@ export default {
                 },
                 {
                     title: "编辑",
-                    width:150,
+                    width: 150,
                     render: (h, params) => {
                         return h("div", [
                             h(
@@ -137,14 +155,13 @@ export default {
                                     },
                                     nativeOn: {
                                         click: () => {
-                                            
-                                            this.currentId = params.row.id
+                                            this.currentId = params.row.id;
                                             this.picData = {
                                                 title: params.row.title,
                                                 text: params.row.text,
                                                 switch: params.row.switch
-                                            }
-                                            this.getTopicDetail()
+                                            };
+                                            this.getTopicDetail();
                                         }
                                     }
                                 },
@@ -159,9 +176,9 @@ export default {
                                     },
                                     nativeOn: {
                                         click: () => {
-                                            this.openDelete(true)
-                                            this.currentId = params.row.id
-                                            this.deleteTitle = params.row.title
+                                            this.openDelete(true);
+                                            this.currentId = params.row.id;
+                                            this.deleteTitle = params.row.title;
                                         }
                                     }
                                 },
@@ -182,40 +199,55 @@ export default {
     methods: {
         //SelectPic组件事件
         returnSelectPic(res) {
-            this.picData.img_id = res
-            this.openNew(false)
-            this.openNew(true)
+            if (this.isCover === 0) {
+                this.picData.cover = res;
+            } else {
+                this.picData.img_id = res;
+            }
+            this.openNew(false);
+            this.openNew(true);
         },
 
         openNew(i) {
             this.newModal = i;
+            // if(this.isNew){
+            //     this.picData = {
+            //         title: '',
+            //         text: '',
+            //         switch: 0,
+            //         img_id: [],
+            //         cover:[]
+            //     }
+            // }
         },
-        cleanData(){
-            if(!this.isNew){
+        cleanData() {
+            if (!this.isNew) {
                 this.picData = {
-                    title: '',
-                    text: '',
-                    switch: '',
-                    img_id: []
-                }
+                    title: "",
+                    text: "",
+                    switch: 0,
+                    img_id: [],
+                    cover: []
+                };
             }
         },
-        oNew(){
-            this.isNew = true
-            this.openNew(true)
+        oNew() {
+            this.isNew = true;
+            this.openNew(true);
         },
-        oEdit(){
-            this.picModalTitle = '修改图片'
-            this.isNew = false
-            this.openNew(true)
+        oEdit() {
+            this.picModalTitle = "修改图片";
+            this.isNew = false;
+            this.openNew(true);
         },
-        openDelete(i){
-            this.deleteModal = i
+        openDelete(i) {
+            this.deleteModal = i;
         },
-        openreviewModal(i){
-            this.reviewModal = i
+        openreviewModal(i) {
+            this.reviewModal = i;
         },
-        openSelect() {
+        openSelect(i) {
+            this.isCover = i;
             this.$refs.selectPicModal.openSelect(true);
         },
 
@@ -232,88 +264,91 @@ export default {
                     this.dayList = res.data;
                 });
         },
-        removeTopic(){
+        removeTopic() {
             axios
                 .request({
-                    url: "specials/"+this.currentId,
+                    url: "specials/" + this.currentId,
                     method: "delete"
-                }).then(res=>{
-                    this.getTopic()
-                    this.$Message.success("success");
                 })
+                .then(res => {
+                    this.getTopic();
+                    this.$Message.success("success");
+                });
         },
-        changeSwitch(a,b){
+        changeSwitch(a, b) {
             axios
                 .request({
                     url: "specials/switch",
                     method: "post",
-                    data:{
-                        id:a,
-                        switch:b===0?1:0
+                    data: {
+                        id: a,
+                        switch: b === 0 ? 1 : 0
                     }
-                }).then(res=>{
-                    this.getTopic()
-                    this.$Message.success("success");
                 })
+                .then(res => {
+                    this.getTopic();
+                    this.$Message.success("success");
+                });
         },
         inputData() {
-            if(this.isNew){
-                let imgL = []
-                for(let i=0;i<this.picData.img_id.length;i++){
-                    imgL.push(this.picData.img_id[i].id)
+            if (this.isNew) {
+                let imgL = [];
+                for (let i = 0; i < this.picData.img_id.length; i++) {
+                    imgL.push(this.picData.img_id[i].id);
                 }
                 axios
-                .request({
-                    url: "specials",
-                    method: "post",
-                    data: {
-                        title: this.picData.title,
-                        text: this.picData.text,
-                        switch: this.picData.switch,
-                        img_id: imgL
-                    }
-                })
-                .then(res => {
-                    this.picData = {
-                        title: "",
-                        text: "",
-                        switch: 1,
-                        img_id: []
-                    },
-                    this.$Message.success("success");
-                    this.getTopic()
-                });
-            }else{
-                let imgL = []
-                for(let i=0;i<this.picData.img_id.length;i++){
-                    imgL.push(this.picData.img_id[i].id)
+                    .request({
+                        url: "specials",
+                        method: "post",
+                        data: {
+                            title: this.picData.title,
+                            text: this.picData.text,
+                            switch: this.picData.switch,
+                            cover: this.picData.cover[0].id,
+                            img_id: imgL
+                        }
+                    })
+                    .then(res => {
+                        (this.picData = {
+                            title: "",
+                            text: "",
+                            switch: 0,
+                            img_id: []
+                        }),
+                            this.$Message.success("success");
+                        this.getTopic();
+                    });
+            } else {
+                let imgL = [];
+                for (let i = 0; i < this.picData.img_id.length; i++) {
+                    imgL.push(this.picData.img_id[i].id);
                 }
                 axios
-                .request({
-                    url: "specials/"+this.currentId,
-                    method: "put",
-                    data: {
-                        title: this.picData.title,
-                        text: this.picData.text,
-                        switch: this.picData.switch,
-                        img_id: imgL
-                    }
-                })
-                .then(res => {
-                    this.picData = {
-                        title: "",
-                        text: "",
-                        switch: "",
-                        img_id: []
-                    },
-                    this.$Message.success("success");
-                    this.getTopic()
-                });
+                    .request({
+                        url: "specials/" + this.currentId,
+                        method: "put",
+                        data: {
+                            title: this.picData.title,
+                            text: this.picData.text,
+                            switch: this.picData.switch,
+                            cover: this.picData.cover[0].id,
+                            img_id: imgL
+                        }
+                    })
+                    .then(res => {
+                        (this.picData = {
+                            title: "",
+                            text: "",
+                            switch: 0,
+                            img_id: []
+                        }),
+                            this.$Message.success("success");
+                        this.getTopic();
+                    });
             }
-            
         },
 
-        getTopic(){
+        getTopic() {
             axios
                 .request({
                     url: "specials",
@@ -321,32 +356,38 @@ export default {
                 })
                 .then(res => {
                     this.topicList = res.data.data;
-                    
                 });
         },
 
-        getTopicDetail(){
+        getTopicDetail() {
             axios
                 .request({
-                    url: "specials/"+this.currentId,
+                    url: "specials/" + this.currentId,
                     method: "get"
                 })
                 .then(res => {
-                    let imgl = []
-                    for(let i=0;i<res.data.imgs.length;i++){
+                    // console.log(res);
+                    this.picData.cover = [
+                        {
+                            url: res.data.cover_img.url,
+                            id: res.data.cover_img.id
+                        }
+                    ];
+                    let imgl = [];
+                    for (let i = 0; i < res.data.imgs.length; i++) {
                         imgl.push({
-                            url:res.data.imgs[i].url,
-                            id:res.data.imgs[i].id
-                        })
+                            url: res.data.imgs[i].url,
+                            id: res.data.imgs[i].id
+                        });
                     }
-                    this.picData.img_id = imgl
-                    this.oEdit()
-                    console.log(this.picData);
+                    this.picData.img_id = imgl;
+
+                    this.oEdit();
                 });
         }
     },
     mounted() {
-        this.getTopic()
+        this.getTopic();
     }
 };
 </script>

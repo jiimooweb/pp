@@ -24,7 +24,7 @@ export default [
     {
         path: '/',
         name: 'home',
-        redirect: '/pzhanAll/dayRec',
+        redirect: '/pzhanAll/picManage',
         component: Main,
         meta: {
             hideInMenu: true,
@@ -41,6 +41,20 @@ export default [
         },
         children: [
             {
+                path: 'picManage',
+                name: '图片管理',
+                meta: {
+                    icon: 'ios-paper-outline'
+                },
+                component: () => import('@/view/pzhanAll/picManage/picManage.vue')
+            }, {
+                path: 'picTag',
+                name: '图片标签管理',
+                meta: {
+                    icon: 'ios-paper-outline'
+                },
+                component: () => import('@/view/pzhanAll/picTag/picTag.vue')
+            },{
                 path: 'dayRec',
                 name: '每日推荐',
                 meta: {
@@ -54,6 +68,27 @@ export default [
                     icon: 'ios-paper-outline'
                 },
                 component: () => import('@/view/pzhanAll/topic/topic.vue')
+            }, {
+                path: 'lunbo',
+                name: '轮播图管理',
+                meta: {
+                    icon: 'ios-paper-outline'
+                },
+                component: () => import('@/view/pzhanAll/lunbo/lunbo.vue')
+            }, /*{
+                path: 'community',
+                name: '社区',
+                meta: {
+                    icon: 'ios-paper-outline'
+                },
+                component: () => import('@/view/pzhanAll/community/community.vue')
+            },*/ {
+                path: 'userManage',
+                name: '用户管理',
+                meta: {
+                    icon: 'ios-paper-outline'
+                },
+                component: () => import('@/view/pzhanAll/userManage/userManage.vue')
             },{
                 path: 'comment',
                 name: '评论管理',
@@ -62,6 +97,13 @@ export default [
                 },
                 component: () => import('@/view/pzhanAll/comment/comment.vue')
             },{
+                path: 'report',
+                name: '举报',
+                meta: {
+                    icon: 'ios-paper-outline'
+                },
+                component: () => import('@/view/pzhanAll/report/report.vue')
+            },{
                 path: 'blackList',
                 name: '黑名单',
                 meta: {
@@ -69,40 +111,12 @@ export default [
                 },
                 component: () => import('@/view/pzhanAll/blackList/blackList.vue')
             }, {
-                path: 'picTag',
-                name: '图片标签管理',
-                meta: {
-                    icon: 'ios-paper-outline'
-                },
-                component: () => import('@/view/pzhanAll/picTag/picTag.vue')
-            }, {
-                path: 'picManage',
-                name: '图片管理',
-                meta: {
-                    icon: 'ios-paper-outline'
-                },
-                component: () => import('@/view/pzhanAll/picManage/picManage.vue')
-            }, {
-                path: 'lunbo',
-                name: '轮播图管理',
-                meta: {
-                    icon: 'ios-paper-outline'
-                },
-                component: () => import('@/view/pzhanAll/lunbo/lunbo.vue')
-            }, {
                 path: 'signIn',
                 name: '登录奖励',
                 meta: {
                     icon: 'ios-paper-outline'
                 },
                 component: () => import('@/view/pzhanAll/signIn/signIn.vue')
-            }, {
-                path: 'userManage',
-                name: '用户管理',
-                meta: {
-                    icon: 'ios-paper-outline'
-                },
-                component: () => import('@/view/pzhanAll/userManage/userManage.vue')
             }
         ]
     },

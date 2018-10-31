@@ -151,10 +151,13 @@ export default {
         //     console.log(this.showModal);
         //     this.showModal = newVal; //newVal即是chartData
         // }
+
+        hasSelect: function(n,l){
+            this.selectList = this.hasSelect
+        }
     },
     mounted() {
         this.getPic();
-        
     }
 };
 </script>
