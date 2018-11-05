@@ -49,7 +49,7 @@
         </row>
         <row span='5'>
             <i-col style="margin-top:20px;" offset='1'>
-                <Page :total="total" :page-size="per_page" :on-change='changePage()' />
+                <Page :total="total" :page-size="per_page" @on-change='changePage' />
             </i-col>
         </row>
     </div>
@@ -76,6 +76,9 @@ export default {
     methods: {
         changePage(index) {
             this.currentPage = index;
+            console.log(this.currentPage);
+            
+            this.submitSearch()
         },
         getTags() {
             axios
@@ -100,7 +103,7 @@ export default {
                 .request({
                     url:
                         "pictures?page=" +
-                        this.indexPage +
+                        this.currentPage +
                         "&title=" +
                         this.title +
                         "&author=" +
@@ -112,6 +115,8 @@ export default {
                     method: "get"
                 })
                 .then(res => {
+                    this.total = res.data.total
+                    this.per_page = res.data.per_page
                     this.$emit("listenToparent", res);
                 });
         }
