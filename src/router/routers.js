@@ -15,6 +15,7 @@ export default [
     {
         path: '/pp',
         name: 'pp',
+        hideInMenu:true,
         redirect: '/login'
     },{
         path: '/login',
