@@ -100,7 +100,7 @@ export default {
                 .request({
                     url:
                         "pictures?page=" +
-                        this.currentPage +
+                        this.indexPage +
                         "&title=" +
                         this.title +
                         "&author=" +

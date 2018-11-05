@@ -49,7 +49,7 @@
             </row>
             <row style="margin-bottom:20px;">
                 <i-col>
-                    <Upload  style="margin-bottom:10px;" action="http://192.168.31.163:8000/qiniu/upload" :on-success='successUpload' :show-upload-list='false' :headers="headers">
+                    <Upload  style="margin-bottom:10px;" action="https://www.rdoorweb.com/pzhan/public/qiniu/upload" :on-success='successUpload' :show-upload-list='false' :headers="headers">
                         <Button icon="ios-cloud-upload-outline">上传图片</Button>
                     </Upload>
                     <img :src="picData.url" width="200px">
@@ -319,7 +319,7 @@ export default {
                 if (this.picData.url !== "" && this.isUpload) {
                     axios
                         .request({
-                            url: "pictures/delete",
+                            url: "qiniu/delete",
                             method: "post",
                             data: {
                                 url: this.picData.url

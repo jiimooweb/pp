@@ -5,7 +5,7 @@
                 <Page :total="total" :page-size="per_page" @on-change='changePage' />
             </i-col>
             <i-col span='6'>
-                <i-button type="primary" @click='openReasonModal()'>管理举报原因</i-button>
+                <!-- <i-button type="primary" @click='openReasonModal()'>管理举报原因</i-button> -->
             </i-col>
             <i-col span='24'>
                 <i-table style="width:100%;min-width:600px;" :columns="reportsColumn" :data="reportsList"></i-table>
@@ -76,7 +76,7 @@ export default {
                                     style: ""
                                 }
                             },
-                            params.row.cause.comment
+                            params.row.cause
                         );
                     }
                 },

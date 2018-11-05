@@ -75,14 +75,14 @@ export default [
                     icon: 'ios-paper-outline'
                 },
                 component: () => import('@/view/pzhanAll/lunbo/lunbo.vue')
-            }, /*{
+            }, {
                 path: 'community',
                 name: '社区',
                 meta: {
                     icon: 'ios-paper-outline'
                 },
                 component: () => import('@/view/pzhanAll/community/community.vue')
-            },*/ {
+            }, {
                 path: 'userManage',
                 name: '用户管理',
                 meta: {
