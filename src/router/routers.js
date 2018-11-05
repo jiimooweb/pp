@@ -13,6 +13,10 @@ import parentView from '@/components/parent-view'
 
 export default [
     {
+        path: '/pp',
+        name: 'pp',
+        redirect: '/login'
+    },{
         path: '/login',
         name: 'login',
         meta: {
