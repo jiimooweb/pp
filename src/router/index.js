@@ -8,7 +8,7 @@ import { getToken, setToken, canTurnTo } from '@/libs/util'
 Vue.use(Router)
 const router = new Router({
   routes,
-  mode: 'hash'
+  mode: 'history'
 })
 const LOGIN_PAGE_NAME = 'login'
 
