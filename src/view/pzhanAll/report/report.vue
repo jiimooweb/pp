@@ -339,7 +339,7 @@ export default {
                         }
                     })
                     .then(res => {
-                        this.getReportCause();
+                        this.getReports();
                         this.$Message.success("success");
                     });
         }
