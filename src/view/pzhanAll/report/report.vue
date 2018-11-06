@@ -43,6 +43,7 @@ export default {
             per_page: 1,
             currentPage: 1,
 
+            byId:'',
             reasonModal: false,
             newModal: false,
             reasonTitle: "新增",
@@ -138,6 +139,44 @@ export default {
                             },
                             params.row.bereport_fan.id
                         );
+                    }
+                },{
+                    title: "操作",
+                    render: (h, params) => {
+                        return h("div", [
+                            h(
+                                "i-button",
+                                {
+                                    props: {
+                                        type: "primary",
+                                        size: "small"
+                                    },
+                                    nativeOn: {
+                                        click: () => {
+                                            this.byId = params.row.id
+                                            this.byReport(1)
+                                        }
+                                    }
+                                },
+                                "通过"
+                            ),
+                            h(
+                                "i-button",
+                                {
+                                    props: {
+                                        type: "error",
+                                        size: "small"
+                                    },
+                                    nativeOn: {
+                                        click: () => {
+                                            this.byId = params.row.id
+                                            this.byReport(0)
+                                        }
+                                    }
+                                },
+                                "不通过"
+                            )
+                        ]);
                     }
                 }
             ],
@@ -283,6 +322,21 @@ export default {
                     .request({
                         url: "report_causes/"+this.currentId,
                         method: "delete"
+                    })
+                    .then(res => {
+                        this.getReportCause();
+                        this.$Message.success("success");
+                    });
+        },
+        byReport(x){
+            axios
+                    .request({
+                        url: "verify",
+                        method: "post",
+                        data:{
+                            report_id:this.byId,
+                            verify:x
+                        }
                     })
                     .then(res => {
                         this.getReportCause();
