@@ -44,7 +44,7 @@
                 </row>
             </i-col>
             <i-col span='2' offset='1'>
-                <i-button type='primary' @click="submitSearch()">搜索</i-button>
+                <i-button type='primary' @click="commit()">搜索</i-button>
             </i-col>
         </row>
         <row span='5'>
@@ -76,8 +76,6 @@ export default {
     methods: {
         changePage(index) {
             this.currentPage = index;
-            console.log(this.currentPage);
-            
             this.submitSearch()
         },
         getTags() {
@@ -95,6 +93,10 @@ export default {
                             })
                         }
                     });
+        },
+        commit(){
+            this.currentPage = 1
+            this.submitSearch()
         },
         submitSearch() {
             // console.log(this.index);
