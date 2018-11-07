@@ -273,7 +273,7 @@ export default {
         },
         inputData() {
             var d = new Date(this.dateText);
-            var datetime=d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds()
+            var datetime=d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate()
             
             if(this.isNew){
                 axios
