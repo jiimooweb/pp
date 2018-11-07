@@ -35,8 +35,7 @@
                 </i-col>
                 <i-col>
                     <!-- <DatePicker type="date" v-model="picData.date" value-format="yyyy-MM-dd" format='yyyy-MM-dd' :options="picDataOptions" @on-change='picData.date=$event' placeholder="选择日期"></DatePicker> -->
-
-                    <DatePicker type="date" v-model="dateText" value-format="yyyy-MM-dd" format='yyyy-MM-dd' :options="picDataOptions" @on-change='picData.date=$event' placeholder="选择日期"></DatePicker>
+                    <DatePicker type="date" v-model="dateText" value-format="yyyy-MM-dd" format='yyyy-MM-dd' :options="picDataOptions" @on-change='dateText=$event' placeholder="选择日期"></DatePicker>
                 </i-col>
             </row>
             <row style="margin-bottom:20px;">
@@ -99,7 +98,7 @@ export default {
             picData: {
                 title: "",
                 text: "",
-                date: "",
+                date: "2018-11-07",
                 img_id: []
             },
             dayColumn: [
@@ -157,12 +156,11 @@ export default {
                                     },
                                     nativeOn: {
                                         click: () => {
-                                            this.oEdit()
                                             this.currentId = params.row.id,
                                             this.picData = {
                                                 title: params.row.title,
                                                 text: params.row.text,
-                                                date: params.row.date,
+                                                // date: params.row.date,
                                                 img_id: [
                                                     {
                                                         url:params.row.picture.url,
@@ -170,6 +168,11 @@ export default {
                                                     }
                                                 ]
                                             }
+                                            // this.$set(this.picData,'date',params.row.date)
+                                            console.log(this.dateText);
+                                            
+                                            this.$set(this.dateText,params.row.date)
+                                            this.oEdit()
                                         }
                                     }
                                 },
@@ -212,14 +215,13 @@ export default {
 
         openNew(i) {
             this.newModal = i;
-            console.log(this.dateText);
         },
         cleanData(){
             if(!this.isNew){
                 this.picData = {
                     title: '',
                     text: '',
-                    date: '',
+                    // date: '2018-11-07',
                     img_id: []
                 }
             }
@@ -232,7 +234,6 @@ export default {
             this.picModalTitle = '修改图片'
             this.isNew = false
             this.openNew(true)
-            console.log(this.dateText);
         },
         openDelete(i){
             this.deleteModal = i
@@ -271,6 +272,9 @@ export default {
                 })
         },
         inputData() {
+            var d = new Date(this.dateText);
+            var datetime=d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds()
+            
             if(this.isNew){
                 axios
                 .request({
@@ -280,16 +284,17 @@ export default {
                         title: this.picData.title,
                         img_id: this.picData.img_id[0].id,
                         text: this.picData.text,
-                        date: this.picData.date
+                        date: datetime
                     }
                 })
                 .then(res => {
                     this.picData = {
                         title: "",
                         text: "",
-                        date: "",
+                        // date: "2018-11-07",
                         img_id: []
                     },
+                    this.$set(this.dateText,'2018-11-08')
                     this.getToday()
                     this.$Message.success("success");
                 });
@@ -302,16 +307,17 @@ export default {
                         title: this.picData.title,
                         img_id: this.picData.img_id[0].id,
                         text: this.picData.text,
-                        date: this.picData.date
+                        date: datetime
                     }
                 })
                 .then(res => {
                     this.picData = {
                         title: "",
                         text: "",
-                        date: "",
+                        // date: "2018-11-07",
                         img_id: []
                     },
+                    this.$set(this.dateText,'2018-11-08')
                     this.getToday()
                     this.$Message.success("success");
                 });
