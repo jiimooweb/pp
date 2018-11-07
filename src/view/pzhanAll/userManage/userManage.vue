@@ -65,8 +65,19 @@ export default {
                     title:'积分',
                     key:'point'
                 },{
-                    title:'性别(1男 2女 0人妖)',
-                    key:'gender'
+                    title:'性别',
+                    // key:'gender'
+                    width:100,
+                    render: (h, params) => {
+                        return h(
+                            "p",
+                            {
+                                attrs: {
+                                }
+                            },
+                            params.row.gender===0?'未知':(params.row.gender===1?'男':'女')
+                        );
+                    }
                 }
             ],
             userList: []

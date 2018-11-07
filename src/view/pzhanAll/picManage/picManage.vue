@@ -49,7 +49,11 @@
             </row>
             <row style="margin-bottom:20px;">
                 <i-col>
-                    <Upload  style="margin-bottom:10px;" action="https://www.rdoorweb.com/pzhan/public/qiniu/upload" :on-success='successUpload' :show-upload-list='false' :headers="headers">
+                    <Spin fix v-if="spinShow">
+                        <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
+                        <div>上传中~~~</div>
+                    </Spin>
+                    <Upload  style="margin-bottom:10px;" action="https://www.rdoorweb.com/pzhan/public/qiniu/upload" :on-success='successUpload' :before-upload='beforeUpload' :show-upload-list='false' :headers="headers">
                         <Button icon="ios-cloud-upload-outline">上传图片</Button>
                     </Upload>
                     <img :src="picData.url" width="200px">
@@ -107,6 +111,9 @@ export default {
     components: { matterSearch },
     data() {
         return {
+            spinShow:false,
+            beforePic:'',
+
             total: 1,
             per_page: 30,
             currentPage: 1,
@@ -307,7 +314,7 @@ export default {
                     title: "",
                     url: "",
                     author: "",
-                    click: ""
+                    click: "0"
                 };
                 this.selectTags = []
                 this.currentId = [];
@@ -372,9 +379,10 @@ export default {
         },
         //successUpload
         successUpload(file) {
+            this.spinShow = false
             if (this.picData.url !== "") {
                 axios.request({
-                    url: "pictures/delete",
+                    url: "qiniu/delete",
                     method: "post",
                     data: {
                         url: this.picData.url
@@ -384,7 +392,10 @@ export default {
             this.picData.url = file.url;
             this.isUpload = true;
         },
-
+        //beforeUpload
+        beforeUpload(file){
+            this.spinShow = true
+        },
         //inputPic
         inputPic() {
             this.sortTags()
@@ -487,4 +498,12 @@ export default {
 </script>
 
 <style scoped>
+.demo-spin-icon-load{
+        animation: ani-demo-spin 1s linear infinite;
+    }
+    @keyframes ani-demo-spin {
+        from { transform: rotate(0deg);}
+        50%  { transform: rotate(180deg);}
+        to   { transform: rotate(360deg);}
+    }
 </style>
