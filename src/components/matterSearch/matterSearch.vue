@@ -36,8 +36,8 @@
                     <i-col span='6' style="text-align:right;line-height:30px;">
                         标签:
                     </i-col>
-                    <i-col span='17' offset='1'>
-                        <Select v-model="tag" style="width:200px" filterable>
+                    <i-col span='15' offset='1'>
+                        <Select v-model="tag" style="width:200px" filterable clearable>
                             <Option v-for="item in tagsList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                         </Select>
                     </i-col>
