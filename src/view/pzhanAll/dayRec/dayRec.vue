@@ -34,7 +34,9 @@
                     日期
                 </i-col>
                 <i-col>
-                    <DatePicker type="date" v-model="picData.date" value-format="yyyy-MM-dd" format='yyyy-MM-dd' :options="picDataOptions" @on-change='picData.date=$event' placeholder="选择日期"></DatePicker>
+                    <!-- <DatePicker type="date" v-model="picData.date" value-format="yyyy-MM-dd" format='yyyy-MM-dd' :options="picDataOptions" @on-change='picData.date=$event' placeholder="选择日期"></DatePicker> -->
+
+                    <DatePicker type="date" v-model="dateText" value-format="yyyy-MM-dd" format='yyyy-MM-dd' :options="picDataOptions" @on-change='picData.date=$event' placeholder="选择日期"></DatePicker>
                 </i-col>
             </row>
             <row style="margin-bottom:20px;">
@@ -79,6 +81,8 @@ export default {
     components: { selectPic },
     data() {
         return {
+            dateText:'2018-11-07',
+
             dayDate: "",
             picModalTitle: "新增图片",
             newModal: false,
@@ -166,8 +170,6 @@ export default {
                                                     }
                                                 ]
                                             }
-                                            console.log(this.picData.date);
-                                            
                                         }
                                     }
                                 },
@@ -210,6 +212,7 @@ export default {
 
         openNew(i) {
             this.newModal = i;
+            console.log(this.dateText);
         },
         cleanData(){
             if(!this.isNew){
@@ -229,6 +232,7 @@ export default {
             this.picModalTitle = '修改图片'
             this.isNew = false
             this.openNew(true)
+            console.log(this.dateText);
         },
         openDelete(i){
             this.deleteModal = i
@@ -322,8 +326,6 @@ export default {
                     method: "get"
                 })
                 .then(res => {
-                    // console.log(res.data.data);
-                    
                     this.dayList = res.data.data;
                 });
         },
