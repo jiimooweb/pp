@@ -19,6 +19,16 @@
             </row>
             <row style="margin-bottom:20px;">
                 <i-col>
+                    <Spin fix v-if="spinShow">
+                        <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
+                        <div>上传中~~~</div>
+                    </Spin>
+                    <Upload  style="margin-bottom:10px;" action="https://www.rdoorweb.com/pzhan/public/qiniu/upload" :on-success='successUpload' :before-upload='beforeUpload' :show-upload-list='false' :headers="headers">
+                        <Button icon="ios-cloud-upload-outline">上传图片</Button>
+                    </Upload>
+                    <img :src="picData.cover" width="200px">
+                </i-col>
+                <!-- <i-col>
                     <i-button style="margin-top: 10px;" type="primary" @click='openSelect(0)'>选择封面</i-button>
                 </i-col>
                 <i-col>
@@ -27,7 +37,8 @@
                             <img :src="item.url" height="230" style="display:block;margin:0 auto;">
                         </div>
                     </div>
-                </i-col>
+                </i-col> -->
+                
             </row>
             <row style="margin-bottom:20px;">
                 <i-col>
@@ -84,10 +95,20 @@
 <script>
 import axios from "@/libs/api.request";
 import selectPic from "@/components/selectPic";
+import Cookies from "js-cookie";
 export default {
     components: { selectPic },
+    computed: {
+        headers() {
+            return {
+                token: Cookies.get("token")
+            };
+        }
+    },
     data() {
         return {
+            isUpload:false,
+            spinShow:false,
             picModalTitle: "新增专题",
             newModal: false,
 
@@ -106,7 +127,7 @@ export default {
                 text: "",
                 date: "",
                 img_id: [],
-                cover: []
+                cover: ''
             },
             topicColumn: [
                 {
@@ -197,10 +218,28 @@ export default {
         };
     },
     methods: {
+        //upload
+        successUpload(file){
+            if (this.picData.cover !== "") {
+                axios.request({
+                    url: "qiniu/delete",
+                    method: "post",
+                    data: {
+                        url: this.picData.cover
+                    }
+                });
+            }
+            this.isUpload = true
+            this.spinShow = false
+            this.picData.cover = file.url
+        },
+        beforeUpload(file) {
+            this.spinShow = true
+        },
         //SelectPic组件事件
         returnSelectPic(res) {
             if (this.isCover === 0) {
-                this.picData.cover = res;
+                // this.picData.cover = res;
             } else {
                 this.picData.img_id = res;
             }
@@ -210,24 +249,26 @@ export default {
 
         openNew(i) {
             this.newModal = i;
-            // if(this.isNew){
-            //     this.picData = {
-            //         title: '',
-            //         text: '',
-            //         switch: 0,
-            //         img_id: [],
-            //         cover:[]
-            //     }
-            // }
         },
         cleanData() {
+            if(this.isUpload){
+                axios.request({
+                    url: "qiniu/delete",
+                    method: "post",
+                    data: {
+                        url: this.picData.cover
+                    }
+                }).then(res=>{
+                    this.isUpload = false
+                });
+            }
             if (!this.isNew) {
                 this.picData = {
                     title: "",
                     text: "",
                     switch: 0,
                     img_id: [],
-                    cover: []
+                    cover: ''
                 };
             }
         },
@@ -304,7 +345,7 @@ export default {
                             title: this.picData.title,
                             text: this.picData.text,
                             switch: this.picData.switch,
-                            cover: this.picData.cover[0].id,
+                            cover: this.picData.cover,
                             img_id: imgL
                         }
                     })
@@ -331,7 +372,7 @@ export default {
                             title: this.picData.title,
                             text: this.picData.text,
                             switch: this.picData.switch,
-                            cover: this.picData.cover[0].id,
+                            cover: this.picData.cover,
                             img_id: imgL
                         }
                     })
@@ -366,13 +407,7 @@ export default {
                     method: "get"
                 })
                 .then(res => {
-                    // console.log(res);
-                    this.picData.cover = [
-                        {
-                            url: res.data.cover_img.url,
-                            id: res.data.cover_img.id
-                        }
-                    ];
+                    this.picData.cover = res.data.cover;
                     let imgl = [];
                     for (let i = 0; i < res.data.imgs.length; i++) {
                         imgl.push({
