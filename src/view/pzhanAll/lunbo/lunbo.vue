@@ -4,7 +4,7 @@
             <i-col style="width:640px;height:480px; float:left;margin-bottom:20px;margin-right:20px;">
                 <Carousel v-model="value" loop>
                     <CarouselItem v-for="item in defaultList">
-                        <img :src="item.image" width="640px" height="480px" style="">
+                        <img :src="item.image" width="640px" height="380px" style="">
                     </CarouselItem>
                 </Carousel>
             </i-col>
