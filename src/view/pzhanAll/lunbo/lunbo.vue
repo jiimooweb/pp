@@ -86,6 +86,14 @@
                 </i-col>
             </row>
         </Modal>
+        <Modal v-model="groupModal" title="删除" @on-ok="deleteGroup()" @on-cancel="openDelete(false)">
+            <row>
+                <i-col style="margin:0 auto;">
+                    是否删除轮播组
+                    ---  <span style="color:red;">{{currentName}}</span> ----
+                </i-col>
+            </row>
+        </Modal>
     </div>
 </template>
 
@@ -95,6 +103,7 @@ import Cookies from "js-cookie";
 export default {
     data() {
         return {
+            groupModal:false,
             value: 0,
             receivedColumn: [
                 {
@@ -154,8 +163,8 @@ export default {
                                     },
                                     nativeOn: {
                                         click: () => {
-                                            this.removeId = params.row.id;
-                                            this.removeName = params.row.name;
+                                            this.currentId = params.row.id;
+                                            this.currentName = params.row.name;
                                             this.openDelete(true);
                                         }
                                     }
@@ -180,14 +189,16 @@ export default {
             groundPic: false,
             defaultList: [{
                 
-            },{
-
-            }],
+                },{
+                    
+                    }],
             previewData:'',
             picData:false,
 
             deleteModal:false,
-            deleteId:''
+            deleteId:'',
+            currentId:'',
+            currentName:'',
         };
     },
     computed: {
@@ -198,6 +209,20 @@ export default {
         }
     },
     methods: {
+        openDelete(i){
+            this.groupModal = i
+        },
+        deleteGroup(){
+            axios
+                .request({
+                    url: "swiper_groups/"+this.currentId,
+                    method: "delete"
+                })
+                .then(res => {
+                    this.$Message.success('删除成功')
+                    this.getLunboGround()
+                });
+        },
         getLunboGround() {
             axios
                 .request({
@@ -325,8 +350,6 @@ export default {
         previewUpload(index){
             this.previewData = this.defaultList[index]
             this.openPicData(true)
-            console.log(index);
-            
         },
         inputData(){
             axios

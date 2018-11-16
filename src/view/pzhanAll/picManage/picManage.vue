@@ -132,6 +132,7 @@ export default {
     components: { matterSearch },
     data() {
         return {
+            spinShow1:false,
             spinShow: false,
             beforePic: "",
 
@@ -578,6 +579,7 @@ export default {
                             value: res.data[i].id
                         });
                     }
+                    this.tagsList.reverse()
                 });
         },
         //整理tag
