@@ -169,7 +169,7 @@ export default {
                                                 ]
                                             }
                                             // this.$set(this.picData,'date',params.row.date)
-                                            console.log(this.dateText);
+                                            console.log(params.row.date);
                                             
                                             this.$set(this.dateText,params.row.date)
                                             this.oEdit()
@@ -294,7 +294,7 @@ export default {
                         // date: "2018-11-07",
                         img_id: []
                     },
-                    this.$set(this.dateText,'2018-11-08')
+                    // this.$set(this.dateText,'2018-11-08')
                     this.getToday()
                     this.$Message.success("success");
                 });
@@ -317,7 +317,7 @@ export default {
                         // date: "2018-11-07",
                         img_id: []
                     },
-                    this.$set(this.dateText,'2018-11-08')
+                    // this.$set(this.dateText,'2018-11-08')
                     this.getToday()
                     this.$Message.success("success");
                 });

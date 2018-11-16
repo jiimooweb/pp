@@ -366,8 +366,9 @@ export default {
                             this.newTag = ''
                             this.$Message.success("success");
                             this.getTags();
-                        },res=>{
+                        }).catch(res=>{
                             this.$Message.error("失败或标签名重复");
+                            this.getTags();
                         });
         },
 
