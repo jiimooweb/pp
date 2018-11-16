@@ -120,8 +120,6 @@ export default {
                     this.total = res.data.total
                     this.per_page = res.data.per_page
                     this.currentPage = res.data.current_page
-                    console.log(this.currentPage);
-                    
                     this.$emit("listenToparent", res);
                 });
         }

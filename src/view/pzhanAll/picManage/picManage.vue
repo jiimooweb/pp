@@ -1,5 +1,6 @@
 <template>
     <div>
+        <Spin fix v-if="spinShow1"></Spin>
         <row>
             <i-col style="margin-bottom:20px;" span='18'>
                 <i-button type="primary" @click='oNew()'>新增图片</i-button>
@@ -338,7 +339,7 @@ export default {
             this.statusModal = i
         },
         changeStatus(i){
-            this.spinShow = true
+            this.spinShow1 = true
             axios
                 .request({
                     url: "pictures/status",
@@ -369,16 +370,13 @@ export default {
         },
         //matterSearch组件事件
         returnMatterSearch(res) {
-            console.log(res);
-            
+            this.spinShow1 = false
             this.picList = res.data.data;
             this.total = res.data.total;
             this.per_page = res.data.per_page;
             this.currentPage = res.data.current_page
         },
         changePage(index){
-            console.log(index);
-            
             this.$refs.matterSearch.submitSearch(index)
         },
         //open
@@ -492,6 +490,7 @@ export default {
         //inputPic
         inputPic() {
             this.sortTags();
+            this.spinShow1 = true
             if (this.isNewPic) {
                 axios
                     .request({
