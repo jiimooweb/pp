@@ -217,6 +217,28 @@ export default {
                     title: "浏览",
                     width: 100,
                     key: "click"
+                },{
+                    title: "浏览",
+                    width: 100,
+                    render: (h, params) => {
+                        var self = this;
+                        return h(
+                            "i-switch",
+                            {
+                                props: {
+                                    trueValue: 1,
+                                    falseValue: 0,
+                                    value: params.row.hidden
+                                },
+                                nativeOn: {
+                                    click: () => {
+                                        this.changeDisplay(params.row.id);
+                                    }
+                                }
+                            },
+                            0
+                        );
+                    }
                 },
                 {
                     title: "编辑",
@@ -287,6 +309,14 @@ export default {
         };
     },
     methods: {
+        changeDisplay(id){
+            axios.request({
+                url:'pictures/'+id+'/hidden',
+                method:'get'
+            }).then(res=>{
+                this.$Message.success('success')
+            })
+        },
         //matterSearch组件事件
         returnMatterSearch(res) {
             this.picList = res.data.data;
