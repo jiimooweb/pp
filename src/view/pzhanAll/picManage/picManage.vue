@@ -49,18 +49,6 @@
             </row>
             <row style="margin-bottom:20px;">
                 <i-col>
-                    <Spin fix v-if="spinShow">
-                        <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
-                        <div>上传中~~~</div>
-                    </Spin>
-                    <Upload style="margin-bottom:10px;" action="https://www.rdoorweb.com/pzhan/public/qiniu/upload" :on-success='successUpload' :before-upload='beforeUpload' :show-upload-list='false' :headers="headers">
-                        <Button icon="ios-cloud-upload-outline">上传图片</Button>
-                    </Upload>
-                    <img :src="picData.url" width="200px">
-                </i-col>
-            </row>
-            <row style="margin-bottom:20px;">
-                <i-col>
                     标签
                 </i-col>
                 <i-col>
@@ -76,6 +64,18 @@
                 </i-col>
                 <i-col span='10' offset='1'>
                     <i-button type="primary" @click='oNewTag(true)'>新建标签</i-button>
+                </i-col>
+            </row>
+            <row style="margin-bottom:20px;">
+                <i-col>
+                    <Spin fix v-if="spinShow">
+                        <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
+                        <div>上传中~~~</div>
+                    </Spin>
+                    <Upload style="margin-bottom:10px;" action="https://www.rdoorweb.com/pzhan/public/qiniu/upload" :on-success='successUpload' :before-upload='beforeUpload' :show-upload-list='false' :headers="headers">
+                        <Button icon="ios-cloud-upload-outline">上传图片</Button>
+                    </Upload>
+                    <img :src="picData.url" width="200px">
                 </i-col>
             </row>
         </Modal>
