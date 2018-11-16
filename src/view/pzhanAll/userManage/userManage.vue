@@ -10,6 +10,9 @@
                 <Page :total="total" :page-size="per_page" @on-change='changePage' />
             </i-col>
             <i-col style="margin-top:20px;">
+                总人数--<span style="color:red">{{total}}</span>--
+            </i-col>
+            <i-col style="margin-top:20px;">
                 <i-table style="width:100%;min-width:600px;" :columns="userColunm" :data="userList"></i-table>
             </i-col>
         </row>
@@ -18,6 +21,7 @@
 
 <script>
 import axios from "@/libs/api.request";
+import wu from "@/assets/images/wu.png";
 export default {
     data() {
         return {
@@ -48,7 +52,7 @@ export default {
                             "img",
                             {
                                 attrs: {
-                                    src: params.row.avatarUrl,
+                                    src: params.row.avatarUrl===''?wu:params.row.avatarUrl,
                                     style: "width:50px;height:50px;"
                                 }
                             },
