@@ -1,10 +1,14 @@
 import Axios from 'axios'
 import baseURL from '_conf/url'
-import { Message } from 'iview'
+import {
+  Message
+} from 'iview'
 import Cookies from 'js-cookie'
-import { TOKEN_KEY } from '@/libs/util'
+import {
+  TOKEN_KEY
+} from '@/libs/util'
 class httpRequest {
-  constructor () {
+  constructor() {
     this.options = {
       method: '',
       url: ''
@@ -13,15 +17,15 @@ class httpRequest {
     this.queue = {}
   }
   // 销毁请求实例
-  destroy (url) {
+  destroy(url) {
     delete this.queue[url]
     const queue = Object.keys(this.queue)
     return queue.length
   }
   // 请求拦截
-  interceptors (instance, url) {
+  interceptors(instance, url) {
     // 添加请求拦截器
-    
+
     instance.interceptors.request.use(config => {
       // config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
       config.headers['Access-Control-Allow-Origin'] = ''
@@ -38,8 +42,10 @@ class httpRequest {
 
     // 添加响应拦截器
     instance.interceptors.response.use((res) => {
-      let { data } = res
-      
+      let {
+        data
+      } = res
+
       const is = this.destroy(url)
       if (!is) {
         setTimeout(() => {
@@ -68,7 +74,7 @@ class httpRequest {
       // console.log(data)
       return data
     }, (error) => {
-      
+
       /*
       error :{
         config
@@ -79,22 +85,27 @@ class httpRequest {
       // Message.error('服务内部错误')
       // 对响应错误做点什么
       // Cookies.remove(TOKEN_KEY)
-        // window.location.href = '/login'
-        if(error['request'].status === 401){
-          Cookies.remove(TOKEN_KEY)
-          window.location.href = '/login'
-          Message.error('登录过期，请重新登录')
-        }else{
-          Message.error('发生未知错误,请按f12查看network')
-        }
-        
-        // Message.error('未登录，或登录失效，请登录')
-      // return Promise.reject(error)
+      // window.location.href = '/login'
+      if (error['request'].status === 500) {
+        return Promise.reject(error)
+      }
+
+
+      if (error['request'].status === 401) {
+        Cookies.remove(TOKEN_KEY)
+        window.location.href = '/login'
+        Message.error('登录过期，请重新登录')
+      } else {
+        Message.error('发生未知错误,请按f12查看network')
+      }
+
+      // Message.error('未登录，或登录失效，请登录')
+      return Promise.reject(error)
     })
-    
+
   }
   // 创建实例
-  create () {
+  create() {
     let conf = {
       baseURL: baseURL,
       // timeout: 2000,
@@ -107,11 +118,11 @@ class httpRequest {
     return Axios.create(conf)
   }
   // 合并请求实例
-  mergeReqest (instances = []) {
+  mergeReqest(instances = []) {
     //
   }
   // 请求实例
-  request (options) {
+  request(options) {
     var instance = this.create()
     this.interceptors(instance, options.url)
     options = Object.assign({}, options)

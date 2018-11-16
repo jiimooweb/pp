@@ -53,7 +53,7 @@
                         <Icon type="ios-loading" size=18 class="demo-spin-icon-load"></Icon>
                         <div>上传中~~~</div>
                     </Spin>
-                    <Upload  style="margin-bottom:10px;" action="https://www.rdoorweb.com/pzhan/public/qiniu/upload" :on-success='successUpload' :before-upload='beforeUpload' :show-upload-list='false' :headers="headers">
+                    <Upload style="margin-bottom:10px;" action="https://www.rdoorweb.com/pzhan/public/qiniu/upload" :on-success='successUpload' :before-upload='beforeUpload' :show-upload-list='false' :headers="headers">
                         <Button icon="ios-cloud-upload-outline">上传图片</Button>
                     </Upload>
                     <img :src="picData.url" width="200px">
@@ -72,7 +72,7 @@
             </row>
             <row style="margin-bottom:20px;">
                 <i-col span='10'>
-                    <Input v-model="newTag"/>
+                    <Input v-model="newTag" />
                 </i-col>
                 <i-col span='10' offset='1'>
                     <i-button type="primary" @click='oNewTag(true)'>新建标签</i-button>
@@ -111,32 +111,31 @@ export default {
     components: { matterSearch },
     data() {
         return {
-            spinShow:false,
-            beforePic:'',
+            spinShow: false,
+            beforePic: "",
 
             total: 1,
             per_page: 30,
             currentPage: 1,
-            index:1,
-            reviewPic:'',
-            
+            index: 1,
+            reviewPic: "",
 
-            newTag:'',
-            tagModal:false,
+            newTag: "",
+            tagModal: false,
 
             picModalTitle: "新增图片",
             newModal: false,
             isNewPic: true,
             isUpload: false,
 
-            deleteModal:false,
-            deleteUrl:'',
+            deleteModal: false,
+            deleteUrl: "",
 
-            reviewModal:false,
+            reviewModal: false,
             tagTotal: 1,
             tag_per_page: 50,
-            currentTagsPage:1,
-            selectTags:[],
+            currentTagsPage: 1,
+            selectTags: [],
 
             currentId: "",
             picData: {
@@ -149,16 +148,16 @@ export default {
             currentTags: [],
             tagsList: [
                 {
-                    label:'a1',
-                    value:1
+                    label: "a1",
+                    value: 1
                 },
                 {
-                    label:'a2',
-                    value:2
+                    label: "a2",
+                    value: 2
                 },
                 {
-                    label:'a3',
-                    value:3
+                    label: "a3",
+                    value: 3
                 }
             ],
 
@@ -169,20 +168,23 @@ export default {
                 },
                 {
                     title: "缩略图",
-                    align: 'center',
-                    width:100,
+                    align: "center",
+                    width: 100,
                     render: (h, params) => {
                         return h(
                             "img",
                             {
                                 attrs: {
-                                    src: params.row.url+'?imageMogr2/auto-orient/thumbnail/x50/blur/1x0/quality/75',
-                                    style: "height:50px;margin:0 auto;display:block;"
+                                    src:
+                                        params.row.url +
+                                        "?imageMogr2/auto-orient/thumbnail/x50/blur/1x0/quality/75",
+                                    style:
+                                        "height:50px;margin:0 auto;display:block;"
                                 },
-                                on:{
+                                on: {
                                     click: () => {
-                                        this.reviewPic = params.row.url
-                                        this.openreviewModal(true)
+                                        this.reviewPic = params.row.url;
+                                        this.openreviewModal(true);
                                     }
                                 }
                             },
@@ -192,33 +194,33 @@ export default {
                 },
                 {
                     title: "作者",
-                    width:200,
-                    align:'center',
+                    width: 200,
+                    align: "center",
                     key: "author"
                 },
                 {
                     title: "作品ID",
-                    width:100,
+                    width: 100,
                     key: "pic_id"
                 },
                 {
                     title: "点赞",
-                    width:100,
+                    width: 100,
                     key: "like"
                 },
                 {
                     title: "收藏",
-                    width:100,
+                    width: 100,
                     key: "collect"
                 },
                 {
                     title: "浏览",
-                    width:100,
+                    width: 100,
                     key: "click"
                 },
                 {
                     title: "编辑",
-                    width:200,
+                    width: 200,
                     render: (h, params) => {
                         return h("div", [
                             h(
@@ -231,16 +233,21 @@ export default {
                                     nativeOn: {
                                         click: () => {
                                             this.isNewPic = false;
-                                            this.selectTags = []
-                                            for(let i=0;i<params.row.tags.length;i++){
-                                                this.selectTags.push(params.row.tags[i].id)
+                                            this.selectTags = [];
+                                            for (
+                                                let i = 0;
+                                                i < params.row.tags.length;
+                                                i++
+                                            ) {
+                                                this.selectTags.push(
+                                                    params.row.tags[i].id
+                                                );
                                             }
-                                            this.picData.id = params.row.pic_id
-                                            
-                                            
+                                            this.picData.id = params.row.pic_id;
+
                                             this.openNew(true);
                                             this.picData = params.row;
-                                            this.currentId = params.row.id
+                                            this.currentId = params.row.id;
                                         }
                                     }
                                 },
@@ -255,9 +262,9 @@ export default {
                                     },
                                     nativeOn: {
                                         click: () => {
-                                            this.currentId = params.row.id
-                                            this.deleteUrl = params.row.url
-                                            this.openDelete(true)
+                                            this.currentId = params.row.id;
+                                            this.deleteUrl = params.row.url;
+                                            this.openDelete(true);
                                         }
                                     }
                                 },
@@ -282,27 +289,27 @@ export default {
     methods: {
         //matterSearch组件事件
         returnMatterSearch(res) {
-            this.picList = res.data.data
+            this.picList = res.data.data;
             // this.total = parseInt(res.data.total);
         },
 
         //open
         //新建图片窗口
-        oNew(){
-            this.isNewPic = true
-            this.openNew(true)
+        oNew() {
+            this.isNewPic = true;
+            this.openNew(true);
         },
-        oEdit(){
-            this.isNewPic = false
-            this.openNew(false)
+        oEdit() {
+            this.isNewPic = false;
+            this.openNew(false);
         },
         // 新建tag窗口
-        oNewTag(i){
-            if(this.newTag === ''){
+        oNewTag(i) {
+            if (this.newTag === "") {
                 this.$Message.error("标签名不能为空");
-                return
+                return;
             }
-            this.tagModal = i
+            this.tagModal = i;
         },
 
         //编辑图片窗口
@@ -316,7 +323,7 @@ export default {
                     author: "",
                     click: "0"
                 };
-                this.selectTags = []
+                this.selectTags = [];
                 this.currentId = [];
             } else {
                 this.picModalTitle = "编辑图片";
@@ -338,18 +345,18 @@ export default {
                 }
             }
         },
-        openDelete(i){
-            this.deleteModal = i
+        openDelete(i) {
+            this.deleteModal = i;
         },
         changePage(index) {
             // console.log(123);
             this.currentPage = index;
         },
-        tagChangePage(index){
+        tagChangePage(index) {
             this.currentTagsPage = index;
         },
-        openreviewModal(i){
-            this.reviewModal = i
+        openreviewModal(i) {
+            this.reviewModal = i;
         },
 
         //上传新标签
@@ -372,15 +379,14 @@ export default {
                         });
         },
 
-
         //getPic
         getPic() {
-            this.$refs.matterSearch.submitSearch()
-            this.selectTags = []
+            this.$refs.matterSearch.submitSearch();
+            this.selectTags = [];
         },
         //successUpload
         successUpload(file) {
-            this.spinShow = false
+            this.spinShow = false;
             if (this.picData.url !== "") {
                 axios.request({
                     url: "qiniu/delete",
@@ -394,12 +400,12 @@ export default {
             this.isUpload = true;
         },
         //beforeUpload
-        beforeUpload(file){
-            this.spinShow = true
+        beforeUpload(file) {
+            this.spinShow = true;
         },
         //inputPic
         inputPic() {
-            this.sortTags()
+            this.sortTags();
             if (this.isNewPic) {
                 axios
                     .request({
@@ -418,8 +424,18 @@ export default {
                     })
                     .then(res => {
                         this.getPic();
-                        this.isUpload = false
+                        this.isUpload = false;
                         this.$Message.success("success");
+                    }).catch(err => {
+                        this.$Message.error("图库内已有重复ID");
+                        this.isUpload = false;
+                        axios.request({
+                            url: "qiniu/delete",
+                            method: "post",
+                            data: {
+                                url: this.picData.url
+                            }
+                        });
                     });
             } else {
                 axios
@@ -439,54 +455,54 @@ export default {
                     })
                     .then(res => {
                         this.getPic();
-                        this.isUpload = false
+                        this.isUpload = false;
                         this.$Message.success("success");
                     });
             }
         },
 
         //removePic
-        removePic(){
+        removePic() {
             axios
-                    .request({
-                        url: "pictures/"+this.currentId,
-                        method: "delete"
-                    })
-                    .then(res => {
-                        this.getPic();
-                        this.isUpload = false
-                        this.$Message.success("success");
-                    });
+                .request({
+                    url: "pictures/" + this.currentId,
+                    method: "delete"
+                })
+                .then(res => {
+                    this.getPic();
+                    this.isUpload = false;
+                    this.$Message.success("success");
+                });
         },
 
         //getTag
         getTags() {
             axios
-                    .request({
-                        url: "tags/all",
-                        method: "get"
-                    })
-                    .then(res => {
-                        this.tagsList = []
-                        for(let i=0;i<res.data.length;i++){
-                            this.tagsList.push({
-                                label:res.data[i].name,
-                                value:res.data[i].id
-                            })
-                        }
-                    });
+                .request({
+                    url: "tags/all",
+                    method: "get"
+                })
+                .then(res => {
+                    this.tagsList = [];
+                    for (let i = 0; i < res.data.length; i++) {
+                        this.tagsList.push({
+                            label: res.data[i].name,
+                            value: res.data[i].id
+                        });
+                    }
+                });
         },
         //整理tag
-        sortTags(){
+        sortTags() {
             console.log(this.selectTags);
-            
-            // this.currentTags = 
-            return
+
+            // this.currentTags =
+            return;
         }
     },
     mounted() {
         this.getPic();
-        this.getTags()
+        this.getTags();
     },
     computed: {
         headers() {
@@ -499,12 +515,18 @@ export default {
 </script>
 
 <style scoped>
-.demo-spin-icon-load{
-        animation: ani-demo-spin 1s linear infinite;
+.demo-spin-icon-load {
+    animation: ani-demo-spin 1s linear infinite;
+}
+@keyframes ani-demo-spin {
+    from {
+        transform: rotate(0deg);
     }
-    @keyframes ani-demo-spin {
-        from { transform: rotate(0deg);}
-        50%  { transform: rotate(180deg);}
-        to   { transform: rotate(360deg);}
+    50% {
+        transform: rotate(180deg);
     }
+    to {
+        transform: rotate(360deg);
+    }
+}
 </style>
