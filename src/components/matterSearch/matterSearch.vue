@@ -1,5 +1,5 @@
 <template>
-    <div style="min-width:1100px;margin-bottom:20px;">
+    <div style="min-width:1100px;margin-bottom:20px;overflow:hidden;">
         <row>
             <i-col span='5'>
                 <row>
@@ -49,7 +49,7 @@
         </row>
         <row span='5'>
             <i-col style="margin-top:20px;" offset='1'>
-                <Page :total="total" :page-size="per_page" @on-change='changePage' />
+                <Page :total="total" :current.sync='currentPage' :page-size="per_page" @on-change='changePage' />
             </i-col>
         </row>
     </div>
@@ -98,14 +98,14 @@ export default {
             this.currentPage = 1
             this.submitSearch()
         },
-        submitSearch() {
+        submitSearch(page = this.currentPage) {
             // console.log(this.index);
             // return;
             axios
                 .request({
                     url:
                         "pictures?page=" +
-                        this.currentPage +
+                        page +
                         "&title=" +
                         this.title +
                         "&author=" +
@@ -119,6 +119,9 @@ export default {
                 .then(res => {
                     this.total = res.data.total
                     this.per_page = res.data.per_page
+                    this.currentPage = res.data.current_page
+                    console.log(this.currentPage);
+                    
                     this.$emit("listenToparent", res);
                 });
         }

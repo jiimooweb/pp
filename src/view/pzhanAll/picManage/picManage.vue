@@ -1,17 +1,23 @@
 <template>
     <div>
         <row>
-            <i-col style="margin-bottom:20px;">
+            <i-col style="margin-bottom:20px;" span='18'>
                 <i-button type="primary" @click='oNew()'>新增图片</i-button>
             </i-col>
-            <i-col>
+            <i-col style="margin-bottom:20px;" span='4'>
+                <Button type='warning' icon="ios-warning-outline" style="width:100%" @click="showStatus(true)">敏感状态</Button>
+            </i-col>
+            <i-col span='24'>
                 <matterSearch @listenToparent='returnMatterSearch' ref="matterSearch"></matterSearch>
             </i-col>
             <!-- <i-col style="margin-top:20px;">
                 <Page :total="total" :page-size="per_page" :on-change='changePage()' />
             </i-col> -->
-            <i-col style="margin-top:10px;">
+            <i-col span='24' style="margin-top:10px;">
                 <i-table style="width:100%;min-width:600px;" :columns="picColumn" :data="picList"></i-table>
+            </i-col>
+            <i-col span='24' style="margin-top:20px;" offset='1'>
+                <Page :total="total" :current.sync='currentPage' :page-size="per_page" @on-change='changePage' />
             </i-col>
         </row>
         <Modal v-model="newModal" :title="picModalTitle" @on-ok="inputPic()" @on-cancel="oEdit()">
@@ -45,6 +51,14 @@
                 </i-col>
                 <i-col>
                     <Input v-model="picData.click" />
+                </i-col>
+            </row>
+            <row style="margin-bottom:20px;">
+                <i-col>
+                    敏感内容（雅蠛蝶）
+                </i-col>
+                <i-col>
+                    <i-switch v-model="picData.status" :true-value='1' :false-value='0' />
                 </i-col>
             </row>
             <row style="margin-bottom:20px;">
@@ -100,6 +114,12 @@
                 </i-col>
             </row>
         </Modal>
+        <Modal v-model="statusModal" title='重要' :footer-hide='true'>
+            <div style="margin:0 auto;width:100%;display:block;overflow:hidden;">
+                <Button type="success" style="width:45%;float:left;" long @click="changeStatus(0)">和平状态（已审核）</Button>
+                <Button type="error" style="width:45%;float:right;" long @click="changeStatus(1)">战时状态（审核中）</Button>
+            </div>
+        </Modal>
     </div>
 </template>
 
@@ -113,6 +133,9 @@ export default {
         return {
             spinShow: false,
             beforePic: "",
+
+            isStatus:0,
+            statusModal:false,
 
             total: 1,
             per_page: 30,
@@ -142,6 +165,7 @@ export default {
                 pic_id: "",
                 title: "",
                 url: "",
+                status:0,
                 author: "",
                 click: ""
             },
@@ -206,19 +230,20 @@ export default {
                 {
                     title: "点赞",
                     width: 100,
-                    key: "like"
+                    key: "like_fans_count"
                 },
                 {
                     title: "收藏",
                     width: 100,
-                    key: "collect"
+                    key: "collect_fans_count"
                 },
                 {
                     title: "浏览",
                     width: 100,
                     key: "click"
-                },{
-                    title: "浏览",
+                },
+                {
+                    title: "隐藏",
                     width: 100,
                     render: (h, params) => {
                         var self = this;
@@ -309,20 +334,53 @@ export default {
         };
     },
     methods: {
-        changeDisplay(id){
-            axios.request({
-                url:'pictures/'+id+'/hidden',
-                method:'get'
-            }).then(res=>{
-                this.$Message.success('success')
-            })
+        showStatus(i){
+            this.statusModal = i
+        },
+        changeStatus(i){
+            this.spinShow = true
+            axios
+                .request({
+                    url: "pictures/status",
+                    method: "post",
+                    data:{
+                        hidden:i
+                    }
+                })
+                .then(res => {
+                    this.getPic()
+                    this.showStatus(false)
+                    if(i === 1){
+                        this.$Message.error("已进入战时状态");
+                    }else{
+                        this.$Message.success("已解除战时状态");
+                    }
+                });
+        },
+        changeDisplay(id) {
+            axios
+                .request({
+                    url: "pictures/" + id + "/hidden",
+                    method: "get"
+                })
+                .then(res => {
+                    this.$Message.success("success");
+                });
         },
         //matterSearch组件事件
         returnMatterSearch(res) {
+            console.log(res);
+            
             this.picList = res.data.data;
-            // this.total = parseInt(res.data.total);
+            this.total = res.data.total;
+            this.per_page = res.data.per_page;
+            this.currentPage = res.data.current_page
         },
-
+        changePage(index){
+            console.log(index);
+            
+            this.$refs.matterSearch.submitSearch(index)
+        },
         //open
         //新建图片窗口
         oNew() {
@@ -350,6 +408,7 @@ export default {
                     id: "",
                     title: "",
                     url: "",
+                    status:0,
                     author: "",
                     click: "0"
                 };
@@ -378,10 +437,6 @@ export default {
         openDelete(i) {
             this.deleteModal = i;
         },
-        changePage(index) {
-            // console.log(123);
-            this.currentPage = index;
-        },
         tagChangePage(index) {
             this.currentTagsPage = index;
         },
@@ -390,23 +445,24 @@ export default {
         },
 
         //上传新标签
-        inputNewTag(){
-                axios
-                        .request({
-                            url: "tags",
-                            method: "post",
-                            data: {
-                                name: this.newTag
-                            }
-                        })
-                        .then(res => {
-                            this.newTag = ''
-                            this.$Message.success("success");
-                            this.getTags();
-                        }).catch(res=>{
-                            this.$Message.error("失败或标签名重复");
-                            this.getTags();
-                        });
+        inputNewTag() {
+            axios
+                .request({
+                    url: "tags",
+                    method: "post",
+                    data: {
+                        name: this.newTag
+                    }
+                })
+                .then(res => {
+                    this.newTag = "";
+                    this.$Message.success("success");
+                    this.getTags();
+                })
+                .catch(res => {
+                    this.$Message.error("失败或标签名重复");
+                    this.getTags();
+                });
         },
 
         //getPic
@@ -446,6 +502,7 @@ export default {
                                 pic_id: this.picData.pic_id,
                                 title: this.picData.title,
                                 url: this.picData.url,
+                                status:this.picData.status,
                                 author: this.picData.author,
                                 click: this.picData.click
                             },
@@ -456,7 +513,8 @@ export default {
                         this.getPic();
                         this.isUpload = false;
                         this.$Message.success("success");
-                    }).catch(err => {
+                    })
+                    .catch(err => {
                         this.$Message.error("图库内已有重复ID");
                         this.isUpload = false;
                         axios.request({
@@ -477,6 +535,7 @@ export default {
                                 pic_id: this.picData.pic_id,
                                 title: this.picData.title,
                                 url: this.picData.url,
+                                status:this.picData.status,
                                 author: this.picData.author,
                                 click: this.picData.click
                             },
