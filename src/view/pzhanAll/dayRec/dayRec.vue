@@ -65,7 +65,7 @@
         <Modal v-model="deleteModal" title="删除" @on-ok="removePic()" @on-cancel="openDelete(false)">
             <row>
                 <i-col style="margin:0 auto;">
-                    <p style="font-size:25px;color:red;text-align:center;">是否删除图片</p><img width="100%" :src="deleteUrl">
+                    <p style="font-size:25px;color:red;text-align:center;">是否删除今日图片</p><img width="100%" :src="deleteUrl">
                 </i-col>
             </row>
         </Modal>
@@ -169,9 +169,12 @@ export default {
                                                 ]
                                             }
                                             // this.$set(this.picData,'date',params.row.date)
-                                            console.log(params.row.date);
-                                            
-                                            this.$set(this.dateText,params.row.date)
+                                            // console.log(params.row.date);
+                                            // console.log(1);
+                                            // console.log(this.dateText);
+                                            this.dateText = params.row.date
+                                            // this.$set(this.dateText,params.row.date)
+                                            // console.log(this.dateText);
                                             this.oEdit()
                                         }
                                     }
@@ -210,7 +213,8 @@ export default {
     methods: {
         //SelectPic组件事件
         returnSelectPic(res) {
-            this.picData.img_id = res;
+            this.picData.img_id = res.selectList;
+            this.picData.title = res.allData[0].title
         },
 
         openNew(i) {
@@ -272,6 +276,8 @@ export default {
                 })
         },
         inputData() {
+            console.log(this.dateText);
+            
             var d = new Date(this.dateText);
             var datetime=d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate()
             

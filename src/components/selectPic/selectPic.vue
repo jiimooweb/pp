@@ -35,6 +35,7 @@ export default {
             total: 1,
             per_page: 1,
             selectModal: false,
+            allData: [],
             picColumn: [
                 {
                     title: "缩略图",
@@ -73,6 +74,8 @@ export default {
                                 },
                                 nativeOn: {
                                     click: ()=>{
+                                        
+                                        this.allData.push(params.row)
                                         if(this.oneOrAll === 0){
                                             //单选
                                             this.selectList = []
@@ -134,7 +137,12 @@ export default {
         },
 
         returnSelect() {
-            this.$emit("listenToparent", this.selectList);
+            let returnO = {
+                selectList: this.selectList,
+                allData: this.allData
+            }
+            this.$emit("listenToparent", returnO);
+            this.allData = []
         },
 
 

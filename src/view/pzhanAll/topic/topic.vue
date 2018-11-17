@@ -241,7 +241,7 @@ export default {
             if (this.isCover === 0) {
                 // this.picData.cover = res;
             } else {
-                this.picData.img_id = res;
+                this.picData.img_id = res.selectList;
             }
             this.openNew(false);
             this.openNew(true);
