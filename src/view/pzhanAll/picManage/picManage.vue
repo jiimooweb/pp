@@ -11,9 +11,9 @@
             <i-col span='24'>
                 <matterSearch @listenToparent='returnMatterSearch' ref="matterSearch"></matterSearch>
             </i-col>
-            <!-- <i-col style="margin-top:20px;">
-                <Page :total="total" :page-size="per_page" :on-change='changePage()' />
-            </i-col> -->
+            <i-col span='24' style="margin-top:20px;">
+                总图片数--<span style="color:red">{{total}}</span>--
+            </i-col>
             <i-col span='24' style="margin-top:10px;">
                 <i-table style="width:100%;min-width:600px;" :columns="picColumn" :data="picList"></i-table>
             </i-col>
