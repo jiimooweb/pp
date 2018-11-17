@@ -11,6 +11,9 @@
             <i-col span='24' style="margin-top:20px;" offset='1'>
                 <Page :total="total" :current.sync='currentPage' :page-size="per_page" @on-change='changePage' />
             </i-col>
+            <i-col span='24' style="margin-top:20px;">
+                总图片数--<span style="color:red">{{total}}</span>--
+            </i-col>
             <i-col span='24'>
                 <i-table style="width:100%;min-width:600px;margin-top:30px;" :columns="dayColumn" :data="dayList"></i-table>
             </i-col>
