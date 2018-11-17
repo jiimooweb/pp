@@ -8,8 +8,14 @@
                 <DatePicker type="date" value-format="yyyy-MM-dd" format='yyyy-MM-dd' @on-change='returnTodayDate' placeholder="选择日期" style="width: 200px"></DatePicker>
                 <i-button style="margin-left: 10px;" type="primary" @click='searchDate()'>搜索</i-button>
             </i-col>
+            <i-col span='24' style="margin-top:20px;" offset='1'>
+                <Page :total="total" :current.sync='currentPage' :page-size="per_page" @on-change='changePage' />
+            </i-col>
             <i-col span='24'>
                 <i-table style="width:100%;min-width:600px;margin-top:30px;" :columns="dayColumn" :data="dayList"></i-table>
+            </i-col>
+            <i-col span='24' style="margin-top:20px;" offset='1'>
+                <Page :total="total" :current.sync='currentPage' :page-size="per_page" @on-change='changePage' />
             </i-col>
         </row>
         <Modal style="width:500px;" v-model="newModal" :title="picModalTitle" @on-ok="inputData()" @on-cancel="cleanData()">
@@ -81,6 +87,10 @@ export default {
     data() {
         return {
             dateText:'2018-11-07',
+
+            total:1,
+            currentPage:1,
+            per_page:1,
 
             dayDate: "",
             picModalTitle: "新增图片",
@@ -211,6 +221,10 @@ export default {
         };
     },
     methods: {
+        changePage(index){
+            this.currentPage = index
+            this.getToday()
+        },
         //SelectPic组件事件
         returnSelectPic(res) {
             this.picData.img_id = res.selectList;
@@ -276,8 +290,6 @@ export default {
                 })
         },
         inputData() {
-            console.log(this.dateText);
-            
             var d = new Date(this.dateText);
             var datetime=d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate()
             
@@ -334,11 +346,13 @@ export default {
         getToday(){
             axios
                 .request({
-                    url: "todays",
+                    url: "todays?page="+this.currentPage,
                     method: "get"
                 })
                 .then(res => {
                     this.dayList = res.data.data;
+                    this.total = res.data.total
+                    this.per_page = res.data.per_page
                 });
         },
 
