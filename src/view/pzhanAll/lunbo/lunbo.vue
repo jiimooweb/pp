@@ -267,16 +267,12 @@ export default {
                 })
                 .then(res => {
                     this.defaultList = res.data.swipers
-                    
-
                     // for(let i=0;i<res.data.swipers.length;i++){
                     //     this.defaultList.push({
                     //         name:i,
                     //         url:res.data.swipers.image
                     //     })
                     // }
-                    console.log(this.defaultList);
-                    
                     if (this.defaultList === null) {
                         this.defaultList = [];
                     }

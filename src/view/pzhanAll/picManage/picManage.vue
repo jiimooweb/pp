@@ -517,6 +517,7 @@ export default {
                     .catch(err => {
                         this.$Message.error("图库内已有重复ID");
                         this.isUpload = false;
+                        this.spinShow1 = false
                         axios.request({
                             url: "qiniu/delete",
                             method: "post",
