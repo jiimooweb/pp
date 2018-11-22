@@ -21,7 +21,10 @@
                 <Page :total="total" :current.sync='currentPage' :page-size="per_page" @on-change='changePage' />
             </i-col>
         </row>
-        <Modal v-model="newModal" :title="picModalTitle" @on-ok="inputPic()" @on-cancel="oEdit()">
+        <Modal v-model="newModal" :title="picModalTitle" :mask-closable="false" @on-ok="inputPic()" @on-cancel="oEdit()">
+            <i-col style="margin-bottom:20px;">
+                <i-button type="primary" @click='getOldData()' :disabled='hasOld'>上一次资料</i-button>
+            </i-col>
             <row style="margin-bottom:20px;">
                 <i-col>
                     标题
@@ -132,12 +135,12 @@ export default {
     components: { matterSearch },
     data() {
         return {
-            spinShow1:false,
+            spinShow1: false,
             spinShow: false,
             beforePic: "",
 
-            isStatus:0,
-            statusModal:false,
+            isStatus: 0,
+            statusModal: false,
 
             total: 1,
             per_page: 30,
@@ -163,11 +166,12 @@ export default {
             selectTags: [],
 
             currentId: "",
+            hasOld: false,
             picData: {
                 pic_id: "",
                 title: "",
                 url: "",
-                status:0,
+                status: 0,
                 author: "",
                 click: ""
             },
@@ -336,25 +340,25 @@ export default {
         };
     },
     methods: {
-        showStatus(i){
-            this.statusModal = i
+        showStatus(i) {
+            this.statusModal = i;
         },
-        changeStatus(i){
-            this.spinShow1 = true
+        changeStatus(i) {
+            this.spinShow1 = true;
             axios
                 .request({
                     url: "pictures/status",
                     method: "post",
-                    data:{
-                        hidden:i
+                    data: {
+                        hidden: i
                     }
                 })
                 .then(res => {
-                    this.getPic()
-                    this.showStatus(false)
-                    if(i === 1){
+                    this.getPic();
+                    this.showStatus(false);
+                    if (i === 1) {
                         this.$Message.error("已进入战时状态");
-                    }else{
+                    } else {
                         this.$Message.success("已解除战时状态");
                     }
                 });
@@ -371,19 +375,20 @@ export default {
         },
         //matterSearch组件事件
         returnMatterSearch(res) {
-            this.spinShow1 = false
+            this.spinShow1 = false;
             this.picList = res.data.data;
             this.total = res.data.total;
             this.per_page = res.data.per_page;
-            this.currentPage = res.data.current_page
+            this.currentPage = res.data.current_page;
         },
-        changePage(index){
-            this.$refs.matterSearch.submitSearch(index)
+        changePage(index) {
+            this.$refs.matterSearch.submitSearch(index);
         },
         //open
         //新建图片窗口
         oNew() {
             this.isNewPic = true;
+            this.verHasOld()
             this.openNew(true);
         },
         oEdit() {
@@ -407,7 +412,7 @@ export default {
                     id: "",
                     title: "",
                     url: "",
-                    status:0,
+                    status: 0,
                     author: "",
                     click: "0"
                 };
@@ -488,10 +493,20 @@ export default {
         beforeUpload(file) {
             this.spinShow = true;
         },
+        getOldData() {
+            this.picData.title = localStorage.getItem("title");
+            this.picData.author = localStorage.getItem("author");
+            this.picData.pic_id = localStorage.getItem("pic_id");
+            this.selectTags = JSON.parse(localStorage.getItem("selectTags"));
+        },
         //inputPic
         inputPic() {
             this.sortTags();
-            this.spinShow1 = true
+            this.spinShow1 = true;
+            localStorage.setItem("title", this.picData.title);
+            localStorage.setItem("author", this.picData.author);
+            localStorage.setItem("pic_id", this.picData.pic_id);
+            localStorage.setItem("selectTags", JSON.stringify(this.selectTags));
             if (this.isNewPic) {
                 axios
                     .request({
@@ -502,7 +517,7 @@ export default {
                                 pic_id: this.picData.pic_id,
                                 title: this.picData.title,
                                 url: this.picData.url,
-                                status:this.picData.status,
+                                status: this.picData.status,
                                 author: this.picData.author,
                                 click: this.picData.click
                             },
@@ -517,7 +532,7 @@ export default {
                     .catch(err => {
                         this.$Message.error("图库内已有重复ID");
                         this.isUpload = false;
-                        this.spinShow1 = false
+                        this.spinShow1 = false;
                         axios.request({
                             url: "qiniu/delete",
                             method: "post",
@@ -536,7 +551,7 @@ export default {
                                 pic_id: this.picData.pic_id,
                                 title: this.picData.title,
                                 url: this.picData.url,
-                                status:this.picData.status,
+                                status: this.picData.status,
                                 author: this.picData.author,
                                 click: this.picData.click
                             },
@@ -580,20 +595,28 @@ export default {
                             value: res.data[i].id
                         });
                     }
-                    this.tagsList.reverse()
+                    this.tagsList.reverse();
                 });
         },
         //整理tag
         sortTags() {
-            console.log(this.selectTags);
+            // console.log(this.selectTags);
 
             // this.currentTags =
             return;
+        },
+        verHasOld() {
+            if (localStorage.getItem("title") !== "") {
+                this.hasOld = false;
+            }else{
+                this.hasOld = true;
+            }
         }
     },
     mounted() {
         this.getPic();
         this.getTags();
+        this.verHasOld();
     },
     computed: {
         headers() {
