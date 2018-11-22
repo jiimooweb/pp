@@ -1,5 +1,6 @@
 <template>
     <div>
+        <Spin fix v-if="spinShow"></Spin>
         <row style="margin:20px 0;">
             <i-col span='5'>
                 <i-button style="margin-top: 10px;" type="primary" @click='oNew()'>新建</i-button>
@@ -14,7 +15,7 @@
                 <Page :total="total" :current.sync='currentPage' :page-size="per_page" @on-change='changePage' />
             </i-col>
         </row>
-        <Modal style="width:500px;" v-model="newModal" title="文章" @on-ok="inputData()" @on-cancel="openNew()">
+        <Modal width='850' v-model="newModal" :mask-closable="false" title="文章" @on-ok="inputNew()" @on-cancel="openNew(false)">
             <row style="margin-bottom:20px;">
                 <i-col>
                     标题
@@ -28,7 +29,7 @@
                     作者
                 </i-col>
                 <i-col>
-                    <Input type="textarea" v-model="newData.text" />
+                    <Input type="textarea" v-model="newData.author" />
                 </i-col>
             </row>
             <row style="margin-bottom:20px;">
@@ -36,7 +37,7 @@
                     点击
                 </i-col>
                 <i-col>
-                    <Input type="textarea" v-model="newData.click" />
+                    <InputNumber :min="0" v-model="newData.click"></InputNumber>
                 </i-col>
             </row>
             <row style="margin-bottom:20px;">
@@ -44,19 +45,27 @@
                     文本
                 </i-col>
                 <i-col>
-                    <i-editor v-model="newData.content"></i-editor>
+                    <div ref="editor" style="text-align:left;width:820px;margin:0 auto;" v-model="newData.content"></div>
+                </i-col>
+                <i-col>
+                    <i-button style="margin-top: 10px;" type="primary" @click='setHtml()'>设置内容</i-button>
+                    <Input type="textarea" v-model="editorContent" />
                 </i-col>
             </row>
+        </Modal>
+        <Modal v-model="deleteModal" title="删除" @on-ok="deleteNew()" @on-cancel="openDelete(false)">
+            是否删除<span style='color:red'>《{{this.currentTitle}}》</span>
         </Modal>
     </div>
 </template>
 
 <script>
 import axios from "@/libs/api.request";
-import Editor from '_c/editor'
+import E from "wangeditor";
 export default {
     data() {
         return {
+            spinShow:false,
             currentPage: 1,
             per_page: 1,
             total: 1,
@@ -65,12 +74,16 @@ export default {
             newData: {
                 title: "",
                 author: "p站星选",
-                click: "",
+                click: 0,
                 content: ""
             },
+
+            deleteModal:false,
+            contentHtml: "",
+            editorContent: "",
             isNew: false,
-            currentId:'',
-            currentTitle:'',
+            currentId: "",
+            currentTitle: "",
             newColumn: [
                 {
                     title: "标题",
@@ -97,14 +110,17 @@ export default {
                                     },
                                     nativeOn: {
                                         click: () => {
-                                            this.isNew = true;
+                                            this.isNew = false;
                                             this.newData = {
                                                 title: params.row.title,
                                                 author: params.row.author,
-                                                click: params.row.click,
-                                                content: params.row.content
+                                                click: params.row.click
                                             };
-                                            this.openNew(i);
+                                            this.currentId = params.row.id;
+                                            this.editorContent =
+                                                params.row.content;
+                                            this.setHtml();
+                                            this.openNew(true);
                                         }
                                     }
                                 },
@@ -118,7 +134,11 @@ export default {
                                         size: "small"
                                     },
                                     nativeOn: {
-                                        click: () => {}
+                                        click: () => {
+                                            this.currentId = params.row.id
+                                            this.currentTitle = params.row.title
+                                            this.openDelete(true)
+                                        }
                                     }
                                 },
                                 "删除"
@@ -127,18 +147,24 @@ export default {
                     }
                 }
             ],
-            newList: []
+            newList: [],
+            editor: {}
         };
     },
     components: {},
     methods: {
-        changePage() {},
+        changePage(index) {
+            this.currentPage = index;
+            this.getNew();
+        },
         oNew() {
             this.isNew = true;
+            this.editorContent = "";
+            this.setHtml();
             this.newData = {
                 title: "",
                 author: "p站星选",
-                click: "",
+                click: 0,
                 content: ""
             };
             this.openNew(true);
@@ -148,17 +174,69 @@ export default {
         },
         inputData() {},
         getNew() {
+            this.spinShow = true
             axios
                 .request({
-                    url: "articles",
+                    url: "articles?page=" + this.currentPage,
                     method: "get"
                 })
                 .then(res => {
+                    this.total = res.data.total;
+                    this.per_page = res.data.per_page;
                     this.newList = res.data.data;
+                    this.spinShow = false
                 });
+        },
+        inputNew() {
+            if(this.newData.title === ''){
+                this.$Message.error('标题不能为空')
+                return
+            }
+            this.spinShow = true
+            axios
+                .request({
+                    url: this.isNew ? "articles" : "articles/" + this.currentId,
+                    method: this.isNew ? "post" : "put",
+                    data: {
+                        title: this.newData.title,
+                        author: this.newData.author,
+                        click: this.newData.click,
+                        content: this.editorContent
+                    }
+                })
+                .then(res => {
+                    this.$Message.success("提交成功");
+                    this.getNew();
+                });
+        },
+        openDelete(i){
+            this.deleteModal = i
+        },
+        deleteNew() {
+            this.spinShow = true
+            axios
+                .request({
+                    url: "articles/" + this.currentId,
+                    method: 'delete'
+                })
+                .then(res => {
+                    this.$Message.success("删除成功");
+                    this.getNew();
+                });
+        },
+        setHtml() {
+            this.editor.txt.html(this.editorContent);
         }
     },
     mounted() {
+        //创建editer实例
+        this.editor = new E(this.$refs.editor);
+        this.editor.customConfig.onchange = html => {
+            this.editorContent = html;
+        };
+        this.editor.customConfig.uploadImgShowBase64 = true;
+        this.editor.create();
+
         this.getNew();
     }
 };
