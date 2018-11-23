@@ -18,7 +18,6 @@
 </template>
 
 <script>
-import * as qiniu from "qiniu-js";
 import axios from "@/libs/api.request";
 import Cookies from "js-cookie";
 export default {
