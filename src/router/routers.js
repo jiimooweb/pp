@@ -19,7 +19,7 @@ export default [
             hideInMenu: true
         },
         redirect: '/login'
-    },{
+    }, {
         path: '/login',
         name: 'login',
         meta: {
@@ -61,14 +61,14 @@ export default [
                     icon: 'ios-paper-outline'
                 },
                 component: () => import('@/view/pzhanAll/picTag/picTag.vue')
-            },{
+            }, {
                 path: 'dayRec',
                 name: '每日推荐',
                 meta: {
                     icon: 'ios-paper-outline'
                 },
                 component: () => import('@/view/pzhanAll/dayRec/dayRec.vue')
-            },{
+            }, {
                 path: 'topic',
                 name: '专题',
                 meta: {
@@ -96,21 +96,21 @@ export default [
                     icon: 'ios-paper-outline'
                 },
                 component: () => import('@/view/pzhanAll/userManage/userManage.vue')
-            },{
+            }, {
                 path: 'comment',
                 name: '评论管理',
                 meta: {
                     icon: 'ios-paper-outline'
                 },
                 component: () => import('@/view/pzhanAll/comment/comment.vue')
-            },{
+            }, {
                 path: 'report',
                 name: '举报',
                 meta: {
                     icon: 'ios-paper-outline'
                 },
                 component: () => import('@/view/pzhanAll/report/report.vue')
-            },{
+            }, {
                 path: 'blackList',
                 name: '黑名单',
                 meta: {
