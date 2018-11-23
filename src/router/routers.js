@@ -75,7 +75,7 @@ export default [
                     icon: 'ios-paper-outline'
                 },
                 component: () => import('@/view/pzhanAll/topic/topic.vue')
-            },{
+            }, {
                 path: 'new',
                 name: '文章管理',
                 meta: {
@@ -131,6 +131,13 @@ export default [
                     icon: 'ios-paper-outline'
                 },
                 component: () => import('@/view/pzhanAll/signIn/signIn.vue')
+            }, {
+                path: 'test',
+                name: '测试',
+                meta: {
+                    icon: 'ios-paper-outline'
+                },
+                component: () => import('@/view/pzhanAll/test/aa.vue')
             }
         ]
     },

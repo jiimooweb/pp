@@ -1,5 +1,5 @@
 <template>
-    <div style="min-width:1100px;margin-bottom:20px;overflow:hidden;">
+    <div style="min-width:1100px;margin-bottom:20px;">
         <row>
             <i-col span='5'>
                 <row>
