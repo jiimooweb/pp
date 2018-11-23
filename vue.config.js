@@ -28,7 +28,7 @@ module.exports = {
   // https://www.foobar.com/my-app/
   // then change this to '/my-app/'
   baseUrl: BASE_URL,
-  outputDir: '../../www.rdoorweb.com/public/pp',
+  outputDir: '../../rdoorweb.com/public/pp',
   // tweak internal webpack configuration.
   // see https://github.com/vuejs/vue-cli/blob/dev/docs/webpack.md
   chainWebpack: config => {

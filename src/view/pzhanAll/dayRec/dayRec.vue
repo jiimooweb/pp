@@ -8,8 +8,17 @@
                 <DatePicker type="date" value-format="yyyy-MM-dd" format='yyyy-MM-dd' @on-change='returnTodayDate' placeholder="选择日期" style="width: 200px"></DatePicker>
                 <i-button style="margin-left: 10px;" type="primary" @click='searchDate()'>搜索</i-button>
             </i-col>
+            <i-col span='24' style="margin-top:20px;" offset='1'>
+                <Page :total="total" :current.sync='currentPage' :page-size="per_page" @on-change='changePage' />
+            </i-col>
+            <i-col span='24' style="margin-top:20px;">
+                总图片数--<span style="color:red">{{total}}</span>--
+            </i-col>
             <i-col span='24'>
                 <i-table style="width:100%;min-width:600px;margin-top:30px;" :columns="dayColumn" :data="dayList"></i-table>
+            </i-col>
+            <i-col span='24' style="margin-top:20px;" offset='1'>
+                <Page :total="total" :current.sync='currentPage' :page-size="per_page" @on-change='changePage' />
             </i-col>
         </row>
         <Modal style="width:500px;" v-model="newModal" :title="picModalTitle" @on-ok="inputData()" @on-cancel="cleanData()">
@@ -65,7 +74,7 @@
         <Modal v-model="deleteModal" title="删除" @on-ok="removePic()" @on-cancel="openDelete(false)">
             <row>
                 <i-col style="margin:0 auto;">
-                    <p style="font-size:25px;color:red;text-align:center;">是否删除图片</p><img width="100%" :src="deleteUrl">
+                    <p style="font-size:25px;color:red;text-align:center;">是否删除今日图片</p><img width="100%" :src="deleteUrl">
                 </i-col>
             </row>
         </Modal>
@@ -81,6 +90,10 @@ export default {
     data() {
         return {
             dateText:'2018-11-07',
+
+            total:1,
+            currentPage:1,
+            per_page:1,
 
             dayDate: "",
             picModalTitle: "新增图片",
@@ -169,9 +182,12 @@ export default {
                                                 ]
                                             }
                                             // this.$set(this.picData,'date',params.row.date)
-                                            console.log(params.row.date);
-                                            
-                                            this.$set(this.dateText,params.row.date)
+                                            // console.log(params.row.date);
+                                            // console.log(1);
+                                            // console.log(this.dateText);
+                                            this.dateText = params.row.date
+                                            // this.$set(this.dateText,params.row.date)
+                                            // console.log(this.dateText);
                                             this.oEdit()
                                         }
                                     }
@@ -208,9 +224,14 @@ export default {
         };
     },
     methods: {
+        changePage(index){
+            this.currentPage = index
+            this.getToday()
+        },
         //SelectPic组件事件
         returnSelectPic(res) {
-            this.picData.img_id = res;
+            this.picData.img_id = res.selectList;
+            this.picData.title = res.allData[0].title
         },
 
         openNew(i) {
@@ -328,11 +349,13 @@ export default {
         getToday(){
             axios
                 .request({
-                    url: "todays",
+                    url: "todays?page="+this.currentPage,
                     method: "get"
                 })
                 .then(res => {
                     this.dayList = res.data.data;
+                    this.total = res.data.total
+                    this.per_page = res.data.per_page
                 });
         },
 

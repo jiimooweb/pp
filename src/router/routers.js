@@ -75,6 +75,13 @@ export default [
                     icon: 'ios-paper-outline'
                 },
                 component: () => import('@/view/pzhanAll/topic/topic.vue')
+            },{
+                path: 'new',
+                name: '文章管理',
+                meta: {
+                    icon: 'ios-paper-outline'
+                },
+                component: () => import('@/view/pzhanAll/new/new.vue')
             }, {
                 path: 'lunbo',
                 name: '轮播图管理',

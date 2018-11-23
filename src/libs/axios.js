@@ -55,7 +55,7 @@ class httpRequest {
       // console.log(data.code);
       if (data.code === 401) {
         // Cookies.remove(TOKEN_KEY)
-        window.location.href = '/login'
+        window.location.href = '/pp'
         Message.error('未登录，或登录失效，请登录')
       }
       /*
@@ -93,7 +93,7 @@ class httpRequest {
 
       if (error['request'].status === 401) {
         Cookies.remove(TOKEN_KEY)
-        window.location.href = '/login'
+        window.location.href = '/pp'
         Message.error('登录过期，请重新登录')
       } else {
         Message.error('发生未知错误,请按f12查看network')
