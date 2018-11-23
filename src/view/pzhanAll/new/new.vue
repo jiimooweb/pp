@@ -86,6 +86,10 @@ export default {
             currentTitle: "",
             newColumn: [
                 {
+                    title: "ID",
+                    key: "id"
+                },
+                {
                     title: "标题",
                     key: "title"
                 },

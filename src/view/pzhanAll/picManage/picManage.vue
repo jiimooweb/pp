@@ -2,11 +2,14 @@
     <div>
         <Spin fix v-if="spinShow1"></Spin>
         <row>
-            <i-col style="margin-bottom:20px;" span='18'>
+            <i-col style="margin-bottom:20px;" span='13'>
                 <i-button type="primary" @click='oNew()'>新增图片</i-button>
             </i-col>
             <i-col style="margin-bottom:20px;" span='4'>
                 <Button type='warning' icon="ios-warning-outline" style="width:100%" @click="showStatus(true)">敏感状态</Button>
+            </i-col>
+            <i-col style="margin-bottom:20px;" span='4' offset='1'>
+                <Button type='primary' icon="ios-warning-outline" style="width:100%" @click="showDisabled(true)">隐藏</Button>
             </i-col>
             <i-col span='24'>
                 <matterSearch @listenToparent='returnMatterSearch' ref="matterSearch"></matterSearch>
@@ -55,6 +58,14 @@
                 </i-col>
                 <i-col>
                     <Input v-model="picData.click" />
+                </i-col>
+            </row>
+            <row style="margin-bottom:20px;">
+                <i-col>
+                    下载积分
+                </i-col>
+                <i-col>
+                    <Input v-model="picData.point" />
                 </i-col>
             </row>
             <row style="margin-bottom:20px;">
@@ -124,6 +135,12 @@
                 <Button type="error" style="width:45%;float:right;" long @click="changeStatus(1)">战时状态（审核中）</Button>
             </div>
         </Modal>
+        <Modal v-model="statusModal" title='重要' :footer-hide='true'>
+            <div style="margin:0 auto;width:100%;display:block;overflow:hidden;">
+                <Button type="success" style="width:45%;float:left;" long @click="disabledA(0)">显示</Button>
+                <Button type="error" style="width:45%;float:right;" long @click="disabledA(1)">隐藏</Button>
+            </div>
+        </Modal>
     </div>
 </template>
 
@@ -141,6 +158,9 @@ export default {
 
             isStatus: 0,
             statusModal: false,
+
+            disabledModal:false,
+
 
             total: 1,
             per_page: 30,
@@ -173,7 +193,8 @@ export default {
                 url: "",
                 status: 0,
                 author: "",
-                click: ""
+                click: "",
+                point:0,
             },
             currentTags: [],
             tagsList: [
@@ -299,7 +320,16 @@ export default {
                                             this.picData.id = params.row.pic_id;
 
                                             this.openNew(true);
-                                            this.picData = params.row;
+                                            // this.picData = params.row;
+                                            this.picData = {
+                                                pic_id: params.row.pic_id,
+                                                title: params.row.title,
+                                                url: params.row.url,
+                                                status: params.row.status,
+                                                author: params.row.author,
+                                                click: params.row.click,
+                                                point:params.row.point,
+                                            }
                                             this.currentId = params.row.id;
                                         }
                                     }
@@ -340,7 +370,30 @@ export default {
         };
     },
     methods: {
+        disabledA(i){
+            return
+            axios
+                .request({
+                    url: "pictures/hidden",
+                    method: "post",
+                    data: {
+                        hidden: i
+                    }
+                })
+                .then(res => {
+                    this.getPic();
+                    this.showStatus(false);
+                    if (i === 1) {
+                        this.$Message.error("已隐藏");
+                    } else {
+                        this.$Message.success("已显示");
+                    }
+                });
+        },
         showStatus(i) {
+            this.statusModal = i;
+        },
+        showDisabled(i) {
             this.statusModal = i;
         },
         changeStatus(i) {
@@ -414,7 +467,8 @@ export default {
                     url: "",
                     status: 0,
                     author: "",
-                    click: "0"
+                    click: "0",
+                    point:0,
                 };
                 this.selectTags = [];
                 this.currentId = [];
@@ -519,7 +573,8 @@ export default {
                                 url: this.picData.url,
                                 status: this.picData.status,
                                 author: this.picData.author,
-                                click: this.picData.click
+                                click: this.picData.click,
+                                point:this.picData.point
                             },
                             tags: this.selectTags
                         }
@@ -553,7 +608,8 @@ export default {
                                 url: this.picData.url,
                                 status: this.picData.status,
                                 author: this.picData.author,
-                                click: this.picData.click
+                                click: this.picData.click,
+                                point:this.picData.point
                             },
                             tags: this.selectTags
                         }

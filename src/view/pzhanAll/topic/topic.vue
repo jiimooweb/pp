@@ -131,6 +131,10 @@ export default {
             },
             topicColumn: [
                 {
+                    title: "ID",
+                    key: "id"
+                },
+                {
                     title: "标题",
                     key: "title"
                 },
