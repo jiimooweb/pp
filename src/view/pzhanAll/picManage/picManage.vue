@@ -268,6 +268,10 @@ export default {
                     title: "浏览",
                     width: 100,
                     key: "click"
+                },{
+                    title: "下载",
+                    width: 100,
+                    key: "download_fans_count"
                 },
                 {
                     title: "隐藏",
