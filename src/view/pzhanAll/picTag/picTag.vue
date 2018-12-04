@@ -4,6 +4,9 @@
             <i-col>
                 <i-button type="primary" @click='openNew(true)'>新增Tag</i-button>
             </i-col>
+            <i-col style="margin-bottom:20px;" span='4' offset='1'>
+                <Button type='primary' icon="ios-warning-outline" style="width:100%" @click="showDisabled(true)">隐藏</Button>
+            </i-col>
             <i-col style="margin-top:20px;">
                 <Page :total="total" :page-size="per_page" @on-change='changePage'/>
             </i-col>
@@ -28,6 +31,12 @@
                 </i-col>
             </row>
         </Modal>
+        <Modal v-model="statusModal" title='重要' :footer-hide='true'>
+            <div style="margin:0 auto;width:100%;display:block;overflow:hidden;">
+                <Button type="success" style="width:45%;float:left;" long @click="disabledA(0)">显示</Button>
+                <Button type="error" style="width:45%;float:right;" long @click="disabledA(1)">隐藏</Button>
+            </div>
+        </Modal>
     </div>
 </template>
 
@@ -36,6 +45,7 @@ import axios from "@/libs/api.request";
 export default {
     data() {
         return {
+            statusModal:false,
             total:1,
             per_page:50,
             currentPage:1,
@@ -47,6 +57,11 @@ export default {
                 {
                     title: "tag名称",
                     key: "name"
+                },
+                {
+                    title: "浏览",
+                    width: 100,
+                    key: "click"
                 },
                 {
                     title: "编辑",
@@ -104,6 +119,25 @@ export default {
         };
     },
     methods: {
+        disabledA(i){
+            axios
+                .request({
+                    url: "pictures/hidden",
+                    method: "post",
+                    data: {
+                        hidden: i
+                    }
+                })
+                .then(res => {
+                    this.getPic();
+                    this.showStatus(false);
+                    if (i === 1) {
+                        this.$Message.error("已隐藏");
+                    } else {
+                        this.$Message.success("已显示");
+                    }
+                });
+        },
         changePage(index){
             this.currentPage = index
             this.getTags(this.currentPage)

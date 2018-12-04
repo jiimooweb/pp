@@ -143,6 +143,11 @@ export default {
                     key: "text"
                 },
                 {
+                    title: "浏览",
+                    width: 100,
+                    key: "visits"
+                },
+                {
                     title: "显示",
                     render: (h, params) => {
                         return h(

@@ -263,15 +263,15 @@ export default {
                     title: "收藏",
                     width: 100,
                     key: "collect_fans_count"
+                },{
+                    title: "下载",
+                    width: 100,
+                    key: "download_fans_count"
                 },
                 {
                     title: "浏览",
                     width: 100,
                     key: "click"
-                },{
-                    title: "下载",
-                    width: 100,
-                    key: "download_fans_count"
                 },
                 {
                     title: "隐藏",
@@ -375,7 +375,6 @@ export default {
     },
     methods: {
         disabledA(i){
-            return
             axios
                 .request({
                     url: "pictures/hidden",
