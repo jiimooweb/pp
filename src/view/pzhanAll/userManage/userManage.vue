@@ -26,6 +26,7 @@ import wu from "@/assets/images/wu.png";
 export default {
     data() {
         return {
+            today:0,
             total: 1,
             per_page: 1,
             selectItem: "-1",
@@ -110,6 +111,7 @@ export default {
                     this.total = res.data.total;
                     this.per_page = res.data.per_page;
                     this.userList = res.data.data;
+                    this.today = res.today.length
                 });
         }
     },
