@@ -125,14 +125,14 @@ export default {
         disabledA(i){
             axios
                 .request({
-                    url: "pictures/hidden",
+                    url: "tags/hidden",
                     method: "post",
                     data: {
                         hidden: i
                     }
                 })
                 .then(res => {
-                    this.getPic();
+                    this.getTags();
                     this.showStatus(false);
                     if (i === 1) {
                         this.$Message.error("已隐藏");
