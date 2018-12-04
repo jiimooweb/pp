@@ -397,7 +397,7 @@ export default {
             this.statusModal = i;
         },
         showDisabled(i) {
-            this.statusModal = i;
+            this.disabledModal = i;
         },
         changeStatus(i) {
             this.spinShow1 = true;
