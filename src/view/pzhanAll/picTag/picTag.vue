@@ -4,7 +4,7 @@
             <i-col span='4'>
                 <i-button type="primary" @click='openNew(true)'>新增Tag</i-button>
             </i-col>
-            <i-col style="margin-bottom:20px;" span='4' offset='15'>
+            <i-col span='4' offset='15'>
                 <Button type='primary' icon="ios-warning-outline" style="width:100%" @click="showDisabled(true)">隐藏</Button>
             </i-col>
             <i-col style="margin-top:20px;">
@@ -133,7 +133,7 @@ export default {
                 })
                 .then(res => {
                     this.getTags();
-                    this.showStatus(false);
+                    this.showDisabled(false);
                     if (i === 1) {
                         this.$Message.error("已隐藏");
                     } else {

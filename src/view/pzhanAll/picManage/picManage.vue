@@ -135,7 +135,7 @@
                 <Button type="error" style="width:45%;float:right;" long @click="changeStatus(1)">战时状态（审核中）</Button>
             </div>
         </Modal>
-        <Modal v-model="statusModal" title='重要' :footer-hide='true'>
+        <Modal v-model="disabledModal" title='重要' :footer-hide='true'>
             <div style="margin:0 auto;width:100%;display:block;overflow:hidden;">
                 <Button type="success" style="width:45%;float:left;" long @click="disabledA(0)">显示</Button>
                 <Button type="error" style="width:45%;float:right;" long @click="disabledA(1)">隐藏</Button>
@@ -385,7 +385,7 @@ export default {
                 })
                 .then(res => {
                     this.getPic();
-                    this.showStatus(false);
+                    this.showDisabled(false);
                     if (i === 1) {
                         this.$Message.error("已隐藏");
                     } else {
