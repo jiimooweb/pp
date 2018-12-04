@@ -194,7 +194,7 @@ export default {
                 status: 0,
                 author: "",
                 click: "",
-                point:0,
+                point:5,
             },
             currentTags: [],
             tagsList: [
@@ -468,7 +468,7 @@ export default {
                     status: 0,
                     author: "",
                     click: "0",
-                    point:0,
+                    point:5,
                 };
                 this.selectTags = [];
                 this.currentId = [];
