@@ -11,6 +11,7 @@
             </i-col>
             <i-col style="margin-top:20px;">
                 总人数--<span style="color:red">{{total}}</span>--
+                今日新增--<span style="color:red">{{today}}</span>--
             </i-col>
             <i-col style="margin-top:20px;">
                 <i-table style="width:100%;min-width:600px;" :columns="userColunm" :data="userList"></i-table>
