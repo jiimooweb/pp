@@ -76,6 +76,13 @@ export default [
                 },
                 component: () => import('@/view/pzhanAll/topic/topic.vue')
             }, {
+                path: 'rank',
+                name: '排行榜',
+                meta: {
+                    icon: 'ios-paper-outline'
+                },
+                component: () => import('@/view/pzhanAll/rank/rank.vue')
+            }, {
                 path: 'new',
                 name: '文章管理',
                 meta: {

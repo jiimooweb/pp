@@ -7,7 +7,7 @@
             <i-col span='4' offset='15' style="margin-bottom:20px;">
                 <Button type='primary' icon="ios-warning-outline" style="width:100%" @click="showDisabled(true)">隐藏</Button>
             </i-col>
-            <i-col>
+            <i-col style="margin-top:20px;"> 
                 <row>
                     <i-col style="margin-bottom:20px;" span='5'>
                         <Input v-model="keyword"/>
