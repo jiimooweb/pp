@@ -237,6 +237,8 @@ export default {
                                 })
                                 .then(res => {
                                     this.defaultList = res.data.swipers;
+                                    
+                                    
                                     if (this.defaultList === null) {
                                         this.defaultList = [{},{}];
                                     }
@@ -271,6 +273,8 @@ export default {
                 })
                 .then(res => {
                     this.currentList = res.data.swipers;
+                    console.log(res.data.swipers);
+                    
                     if (this.currentList === null) {
                         this.currentList = [{},{}];
                     }
@@ -342,7 +346,8 @@ export default {
 
         //clickPic
         previewUpload(index) {
-            this.previewData = this.defaultList[index];
+            
+            this.previewData = this.currentList[index];
             this.openPicData(true);
         },
         inputData() {
