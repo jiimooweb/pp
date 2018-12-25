@@ -74,7 +74,6 @@ export default {
                                 },
                                 nativeOn: {
                                     click: ()=>{
-                                        
                                         this.allData.push(params.row)
                                         if(this.oneOrAll === 0){
                                             //单选

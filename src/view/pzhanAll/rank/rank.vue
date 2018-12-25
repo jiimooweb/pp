@@ -1,95 +1,57 @@
 <template>
     <div style="min-width:1200px;">
+        <Spin fix v-if="spinShow"></Spin>
         <row>
             <i-col span='3'>
-                <DatePicker
-                    type="date"
-                    v-model="newDate"
-                    value-format="yyyy-MM-dd"
-                    format='yyyy-MM-dd'
-                    @on-change='newDate=$event'
-                    placeholder="选择日期"
-                ></DatePicker>
+                <DatePicker type="date" v-model="newDate" value-format="yyyy-MM-dd" format='yyyy-MM-dd' @on-change='newDate=$event'
+                    placeholder="选择日期"></DatePicker>
             </i-col>
-            <i-col
-                style="margin-bottom:20px;"
-                span='6'
-            >
-                <i-button
-                    type="primary"
-                    @click='indexNewDate()'
-                >新建日期</i-button>
+            <i-col style="margin-bottom:20px;" span='6'>
+                <i-button type="primary" @click='indexNewDate()'>新建日期</i-button>
             </i-col>
         </row>
         <row>
-            <i-col
-                style="margin-bottom:20px;"
-                span='4'
-            >
+            <i-col style="margin-bottom:20px;" span='4'>
                 年
-                <Select
-                    v-model="year"
-                    @on-change='getRankDay()'
-                    style="width:200px"
-                >
-                    <Option
-                        v-for="item in yearList"
-                        :value="item.key"
-                        :key="item.key"
-                    >{{ item.key }}</Option>
+                <Select v-model="year" @on-change='getRankDay()' style="width:200px">
+                    <Option v-for="item in yearList" :value="item.key" :key="item.key">{{ item.key }}</Option>
                 </Select>
             </i-col>
-            <i-col
-                style="margin-bottom:20px;"
-                span='4'
-            >
+            <i-col style="margin-bottom:20px;" span='4'>
                 月
-                <Select
-                    v-model="month"
-                    @on-change='getRankDay()'
-                    style="width:200px"
-                >
-                    <Option
-                        v-for="(item,index) in 12"
-                        :value="index"
-                        :key="index"
-                    >{{ index+1 }}</Option>
+                <Select v-model="month" @on-change='getRankDay()' style="width:200px">
+                    <Option v-for="(item,index) in 12" :value="index" :key="index">{{ index+1 }}</Option>
                 </Select>
             </i-col>
         </row>
         <row>
             <i-col style="margin-bottom:20px;">
                 日
-                <RadioGroup
-                    v-model="day"
-                    type="button"
-                    size="small"
-                    @on-change='changeDay'
-                >
-                    <Radio
-                        v-for="(item,index) in dateList"
-                        :key='index'
-                        :label="item.id"
-                    >{{item.date.substring(8)}}</Radio>
+                <RadioGroup v-model="day" type="button" size="small" @on-change='changeDay'>
+                    <Radio v-for="(item,index) in dateList" :key='index' :label="item.id">{{item.date.substring(8)}}</Radio>
                 </RadioGroup>
             </i-col>
         </row>
         <row v-if="day !== ''">
-            <i-button style="margin-top: 10px;" type="primary" @click='openSelect()'>选择图片</i-button>
-            <i-col style="width:820px;overflow:hidden;float:left;">
-                <div
-                    :class="'picItem '+(index === activeRank?'active':'')"
-                    v-for="(item, index) in rankData"
-                    :key="index"
-                    @click="selectPic(index)"
-                >
-                    <img :src="item.picture.url">
+            <i-col style="margin-bottom:10px;">
+                <i-button style="margin-top: 10px;" type="primary" @click='openSelect()'>新增图片</i-button>
+                <Button style="margin-top: 10px;" type="primary" shape="circle" icon="ios-refresh" @click="getDayPic()"></Button>
+            </i-col>
+            <i-col style="width:840px;overflow:hidden;float:left;overflow-y:scroll;height:500px;" id="scrollDiv">
+                <div :class="'picItem '+(index === activeRank?'active':'')" v-for="(item, index) in rankData" :key="index"
+                    @click="selectPic(index)">
+                    <img :src="item.picture.url + '?imageMogr2/auto-orient/thumbnail/!20p/blur/1x0/quality/75|imageslim'">
                 </div>
             </i-col>
-            <i-col style="width:200px;float:left;">
+            <i-col style="width:200px;float:left;margin-left:50px;">
+                <row>
+                    <i-col>
+                        {{itemData.id}}
+                    </i-col>
+                </row>
                 <row style="height: 0;overflow:hidden;">
                     <i-col>
-                        <Input ref="a0" v-model="itemData.in" />
+                        <Input ref="a0" v-model="ain" />
                     </i-col>
                 </row>
                 <row>
@@ -97,7 +59,7 @@
                         名次
                     </i-col>
                     <i-col>
-                        <Input ref="a1" v-model="itemData.ranking"/>
+                        <Input ref="a1" v-model="itemData.ranking" />
                     </i-col>
                 </row>
                 <row style="margin-top:5px;">
@@ -161,7 +123,7 @@
                 </row>
             </i-col>
         </row>
-        <selectPic oneOrAll='1' :hasSelect='rankData' @listenToparent='returnSelectPic' ref="selectPicModal"></selectPic>
+        <selectPic :oneOrAll='1' :hasSelect='rankReset' @listenToparent='returnSelectPic' ref="selectPicModal"></selectPic>
     </div>
 </template>
 
@@ -172,81 +134,139 @@ export default {
     components: { selectPic },
     data() {
         return {
+            spinShow:false,
             newDate: "",
             yearList: [{ key: "2018" }, { key: "2019" }],
             dateList: [],
             rankData: [],
+            rankReset:[],
             activeRank: 0,
-            itemData:{
-                in:0,
-                img_id:0,
-                ranking:1,
-                old_ranking:1,
-                up:0,
-                is_first:0,
-                is_hidden:0,
-                count:1,
-                definition:0,
-                sid:0
+            ain: 0,
+            itemData: {
+                id:'',
+                img_id: 0,
+                ranking: 1,
+                old_ranking: 1,
+                up: 0,
+                is_first: 0,
+                is_hidden: 0,
+                count: 1,
+                definition: 0,
+                sid: 0
             },
-            currentItem:1,
+            currentItem: 1,
             year: "2018",
             month: 11,
-            day: ""
+            day: "",
+            currentDayId:''
         };
     },
     methods: {
         openSelect() {
+            this.rankReset = []
             this.$refs.selectPicModal.openSelect(true);
         },
         //SelectPic组件事件
-        returnSelectPic(res){
-            this.rankData = res.selectList
+        returnSelectPic(res) {
+            this.rankReset = []
+            for(let i=0;i<res.selectList.length;i++){
+                this.rankReset.push(res.selectList[i].id)
+            }
+            //新增图片
+            this.spinShow = true
+            axios.request({
+                url:'leaderboards',
+                method:'post',
+                data:{
+                    ids:this.rankReset,
+                    date_id: this.currentDayId
+                }
+            }).then(res=>{
+                this.getDayPic()
+            })
         },
-        selectPic(index){
-            this.activeRank = index
+        selectPic(index) {
+            this.activeRank = index;
+            this.itemData = this.rankData[index]
         },
         changeDay(key) {
-            this.getDayPic(key);
+            this.currentDayId = key
+            this.getDayPic();
         },
-        getDayPic(key) {
+        getDayPic() {
+            this.spinShow = true
             axios
                 .request({
-                    url: "leaderDates/" + key,
+                    url: "leaderDates/" + this.currentDayId,
                     method: "get"
                 })
                 .then(res => {
+                    this.spinShow = false
                     this.rankData = res.data.leaderboards;
-                    this.rangNum = this.rankData.length
-                    this.currentItem = 1
-                    this.$refs['a'+ this.currentItem].focus()
-                    document.onkeydown = (e) => {
-                        
+                    this.rangNum = this.rankData.length;
+                    this.currentItem = 1;
+                    this.$refs["a" + this.currentItem].focus();
+                    this.itemData = this.rankData[0]
+                    document.onkeydown = e => {
                         var key = window.event.keyCode;
-                        console.log(key);
-                        
                         //keycode → 39  ← 37
                         if (key == 39) {
                             //右 下一个
-                            this.activeRank < this.rankData.length-1?(this.activeRank++):(this.activeRank = 0)
-                        }else if (key == 37){
+                            this.activeRank < this.rankData.length - 1
+                                ? this.activeRank++
+                                : (this.activeRank = 0);
+                                this.itemData = this.rankData[this.activeRank]
+                                document.querySelector('#scrollDiv').scrollTop = Math.floor(this.activeRank/4) * 200
+                                
+                        } else if (key == 37) {
                             //左 上一个
-                            this.activeRank > 0?(this.activeRank--):(this.activeRank = this.rankData.length-1)
+                            this.activeRank > 0
+                                ? this.activeRank--
+                                : (this.activeRank = this.rankData.length - 1);
+                                this.itemData = this.rankData[this.activeRank]
+                                document.querySelector('#scrollDiv').scrollTop = Math.floor(this.activeRank/4) * 200
                         }
-                        if(key == 9){
-                            if(this.currentItem<3){
-                                this.currentItem ++
-                            }else{
-                                this.currentItem = 0
+                        if (key == 9) {
+                            this.$refs["a" + this.currentItem].focus();
+                            if (this.currentItem < 3) {
+                                this.currentItem++;
+                            } else {
+                                this.currentItem = 0;
                             }
-                            console.log(this.currentItem);
                             
-                            this.$refs['a'+ this.currentItem].focus()
                         }
-                        if(key == 13){
+                        if (key == 13) {
+                            this.spinShow = true
                             //保存
+                            axios.request({
+                                url:'leaderboards/'+this.itemData.id,
+                                method:'put',
+                                data:{
+                                    ranking:this.itemData.ranking,
+                                    old_ranking:this.itemData.old_ranking,
+                                    up:this.itemData.up,
+                                    count:this.itemData.count,
+                                    definition:this.itemData.definition,
+                                    sid:this.itemData.sid,
+                                    is_first:this.itemData.is_first,
+                                    is_hidden:this.itemData.is_hidden,
+                                }
+                            }).then(res=>{
+                                this.spinShow = false
+                                this.$Message.success('保存成功')
+                                if(this.activeRank  < this.rankData.length - 1){
+                                    this.activeRank++
+                                }else{
+                                    this.activeRank = 0
+                                }
+                                this.currentItem = 1
+                                this.$refs["a" + this.currentItem].focus();
+                                this.itemData = this.rankData[this.activeRank]
+                                document.querySelector('#scrollDiv').scrollTop = Math.floor(this.activeRank/4) * 200
+                            })
                         }
                     };
+                    
                 });
         },
         indexNewDate() {
