@@ -43,7 +43,7 @@
                     <img :src="item.picture.url + '?imageMogr2/auto-orient/thumbnail/!20p/blur/1x0/quality/75|imageslim'">
                 </div>
             </i-col>
-            <i-col style="width:200px;float:left;margin-left:50px;">
+            <i-col style="width:200px;float:left;margin-left:50px;" v-if="this.rankData.length>0">
                 <row>
                     <i-col>
                         {{itemData.id}}
@@ -143,7 +143,7 @@ export default {
             activeRank: 0,
             ain: 0,
             itemData: {
-                id:'',
+                id:0,
                 img_id: 0,
                 ranking: 1,
                 old_ranking: 1,
@@ -205,6 +205,11 @@ export default {
                     this.rankData = res.data.leaderboards;
                     this.rangNum = this.rankData.length;
                     this.currentItem = 1;
+                    
+                    
+                    if(this.rangNum === 0){
+                        return
+                    }
                     this.$refs["a" + this.currentItem].focus();
                     this.itemData = this.rankData[0]
                     document.onkeydown = e => {
@@ -266,7 +271,6 @@ export default {
                             })
                         }
                     };
-                    
                 });
         },
         indexNewDate() {
