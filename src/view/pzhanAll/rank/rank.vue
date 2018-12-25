@@ -342,6 +342,9 @@ export default {
     mounted() {
         this.getRankDay();
         
+    },
+    destroyed(){
+        document.onkeydown = undefined
     }
 };
 </script>
