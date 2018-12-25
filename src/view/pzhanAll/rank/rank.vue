@@ -70,20 +70,20 @@
                         <Input ref="a2" v-model="itemData.old_ranking" />
                     </i-col>
                 </row>
-                <row style="margin-top:5px;">
+                <!-- <row style="margin-top:5px;">
                     <i-col>
                         上升
                     </i-col>
                     <i-col>
-                        <Input ref="a3" v-model="itemData.up" />
+                        <Input ref="a4" v-model="itemData.up" />
                     </i-col>
-                </row>
+                </row> -->
                 <row style="margin-top:5px;">
                     <i-col>
                         图片数量
                     </i-col>
                     <i-col>
-                        <Input ref="a4" v-model="itemData.count" />
+                        <Input ref="a3" v-model="itemData.count" />
                     </i-col>
                 </row>
                 <row style="margin-top:5px;">
@@ -210,8 +210,8 @@ export default {
                     if(this.rangNum === 0){
                         return
                     }
-                    this.$refs["a" + this.currentItem].focus();
-                    this.itemData = this.rankData[0]
+                    // this.$refs["a" + this.currentItem].focus();
+                    // this.itemData = this.rankData[0]
                     document.onkeydown = e => {
                         var key = window.event.keyCode;
                         //keycode → 39  ← 37
@@ -233,7 +233,7 @@ export default {
                         }
                         if (key == 9) {
                             this.$refs["a" + this.currentItem].focus();
-                            if (this.currentItem < 3) {
+                            if (this.currentItem < 2) {
                                 this.currentItem++;
                             } else {
                                 this.currentItem = 0;
@@ -272,6 +272,36 @@ export default {
                         }
                     };
                 });
+        },
+        inputData(){
+            this.spinShow = true
+                            //保存
+                            axios.request({
+                                url:'leaderboards/'+this.itemData.id,
+                                method:'put',
+                                data:{
+                                    ranking:this.itemData.ranking,
+                                    old_ranking:this.itemData.old_ranking,
+                                    up:this.itemData.up,
+                                    count:this.itemData.count,
+                                    definition:this.itemData.definition,
+                                    sid:this.itemData.sid,
+                                    is_first:this.itemData.is_first,
+                                    is_hidden:this.itemData.is_hidden,
+                                }
+                            }).then(res=>{
+                                this.spinShow = false
+                                this.$Message.success('保存成功')
+                                if(this.activeRank  < this.rankData.length - 1){
+                                    this.activeRank++
+                                }else{
+                                    this.activeRank = 0
+                                }
+                                this.currentItem = 1
+                                this.$refs["a" + this.currentItem].focus();
+                                this.itemData = this.rankData[this.activeRank]
+                                document.querySelector('#scrollDiv').scrollTop = Math.floor(this.activeRank/4) * 200
+                            })
         },
         indexNewDate() {
             if (this.newDate === "") {
