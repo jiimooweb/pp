@@ -149,7 +149,7 @@ export default {
                 old_ranking: 1,
                 up: 0,
                 is_first: 0,
-                is_hidden: 0,
+                is_hidden: 1,
                 count: 1,
                 definition: 0,
                 sid: 0

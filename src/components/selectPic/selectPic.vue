@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Modal v-model="selectModal" style="overflow:hidden;" width='1200px' height='500px' title="选择图片" @on-ok="returnSelect()" @on-cancel="closeModal">
+        <Modal v-model="selectModal" style="overflow:hidden;" width='1200px' height='500px' title="选择图片" @on-ok="returnSelect()" @on-cancel="closeModal" :mask-closable="false">
             <i-col>
                 <matterSearch @listenToparent='returnMatterSearch' :index='index' ref="matterSearch"></matterSearch>
             </i-col>
