@@ -89,7 +89,7 @@ export default {
     components: { selectPic },
     data() {
         return {
-            dateText:'2018-11-07',
+            dateText:'',
 
             total:1,
             currentPage:1,
@@ -111,7 +111,7 @@ export default {
             picData: {
                 title: "",
                 text: "",
-                date: "2018-11-07",
+                date: "",
                 img_id: []
             },
             dayColumn: [
@@ -224,6 +224,10 @@ export default {
         };
     },
     methods: {
+        getTodayTime(){
+            let today = new Date()
+            this.dateText = today.getFullYear() + '-' + today.getMonth() + 1 + '-' + today.getDate()
+        },
         changePage(index){
             this.currentPage = index
             this.getToday()
@@ -293,9 +297,7 @@ export default {
                 })
         },
         inputData() {
-            var d = new Date(this.dateText);
-            var datetime=d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate()
-            
+            this.getTodayTime()
             if(this.isNew){
                 axios
                 .request({
