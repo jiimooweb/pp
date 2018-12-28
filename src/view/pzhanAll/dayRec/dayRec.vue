@@ -226,7 +226,9 @@ export default {
     methods: {
         getTodayTime(){
             let today = new Date()
-            this.dateText = today.getFullYear() + '-' + today.getMonth() + 1 + '-' + today.getDate()
+            this.dateText = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
+            console.log(this.dateText);
+            
         },
         changePage(index){
             this.currentPage = index
@@ -297,7 +299,9 @@ export default {
                 })
         },
         inputData() {
-            this.getTodayTime()
+            if(!this.dateText.length){
+                this.dateText = this.dateText.getFullYear() + '-' + (this.dateText.getMonth() + 1) + '-' + this.dateText.getDate()
+            }
             if(this.isNew){
                 axios
                 .request({
@@ -307,7 +311,7 @@ export default {
                         title: this.picData.title,
                         img_id: this.picData.img_id[0].id,
                         text: this.picData.text,
-                        date: datetime
+                        date: this.dateText
                     }
                 })
                 .then(res => {
@@ -330,7 +334,7 @@ export default {
                         title: this.picData.title,
                         img_id: this.picData.img_id[0].id,
                         text: this.picData.text,
-                        date: datetime
+                        date: this.dateText
                     }
                 })
                 .then(res => {
@@ -358,6 +362,7 @@ export default {
                     this.dayList = res.data.data;
                     this.total = res.data.total
                     this.per_page = res.data.per_page
+                    this.getTodayTime()
                 });
         },
 
