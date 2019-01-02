@@ -1,6 +1,9 @@
 <template>
     <div>
         <row>
+            <i-col style="margin-bottom:20px;">
+                <Button type='primary' icon="ios-warning-outline" @click="showDisabled(true)">隐藏</Button>
+            </i-col>
             <i-col>
                 <Page :total="total" :page-size='pageSize' @on-change='changePage' />
             </i-col>
@@ -22,6 +25,12 @@
                 </i-col>
             </row>
         </Modal>
+        <Modal v-model="statusModal" title='重要' :footer-hide='true'>
+            <div style="margin:0 auto;width:100%;display:block;overflow:hidden;">
+                <Button type="success" style="width:45%;float:left;" long @click="disabledA(0)">显示</Button>
+                <Button type="error" style="width:45%;float:right;" long @click="disabledA(1)">隐藏</Button>
+            </div>
+        </Modal>
     </div>
 </template>
 
@@ -30,6 +39,7 @@ import axios from "@/libs/api.request";
 export default {
     data() {
         return {
+            statusModal:false,
             total: 1,
             pageSize: 1,
             currentPage:1,
@@ -70,6 +80,28 @@ export default {
                 {
                     title: "日期",
                     key: "created_at"
+                },{
+                    title: "隐藏",
+                    width: 100,
+                    render: (h, params) => {
+                        var self = this;
+                        return h(
+                            "i-switch",
+                            {
+                                props: {
+                                    trueValue: 1,
+                                    falseValue: 0,
+                                    value: params.row.hidden
+                                },
+                                nativeOn: {
+                                    click: () => {
+                                        this.changeDisplay(params.row.id);
+                                    }
+                                }
+                            },
+                            0
+                        );
+                    }
                 },
                 {
                     title: "查看图片",
@@ -116,6 +148,38 @@ export default {
         };
     },
     methods: {
+        showDisabled(i) {
+            this.statusModal = i;
+        },
+        changeDisplay(id) {
+            axios
+                .request({
+                    url: "pictures/" + id + "/hidden",
+                    method: "get"
+                })
+                .then(res => {
+                    this.$Message.success("success");
+                });
+        },
+        disabledA(i){
+            axios
+                .request({
+                    url: "socials/hidden",
+                    method: "post",
+                    data: {
+                        hidden: i
+                    }
+                })
+                .then(res => {
+                    this.showDisabled(false);
+                    this.getSocials()
+                    if (i === 1) {
+                        this.$Message.error("已隐藏");
+                    } else {
+                        this.$Message.success("已显示");
+                    }
+                });
+        },
         openDelete(i) {
             this.deleteModal = i;
         },
@@ -129,7 +193,7 @@ export default {
         getSocials() {
             axios
                 .request({
-                    url: "socials?page=" + this.currentPage,
+                    url: "socials/index?page=" + this.currentPage,
                     method: "get"
                 })
                 .then(res => {
