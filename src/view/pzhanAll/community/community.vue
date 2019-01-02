@@ -154,7 +154,7 @@ export default {
         changeDisplay(id) {
             axios
                 .request({
-                    url: "pictures/" + id + "/hidden",
+                    url: "socials/" + id + "/hidden",
                     method: "get"
                 })
                 .then(res => {
