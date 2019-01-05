@@ -548,6 +548,7 @@ export default {
         },
         //beforeUpload
         beforeUpload(file) {
+            this.picData.pic_id = (file.name.split('.'))[0].replace("_p0","");
             this.spinShow = true;
         },
         getOldData() {
