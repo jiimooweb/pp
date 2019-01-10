@@ -91,7 +91,7 @@
                         清晰度
                     </i-col>
                     <i-col>
-                        <InputNumber v-model="itemData.definition"></InputNumber>
+                        <Input ref="a4" v-model="itemData.definition" />
                     </i-col>
                 </row>
                 <row style="margin-top:5px;">
@@ -99,7 +99,7 @@
                         上层ID
                     </i-col>
                     <i-col>
-                        <InputNumber v-model="itemData.sid"></InputNumber>
+                        <Input ref="a5" v-model="itemData.sid" />
                     </i-col>
                 </row>
                 <row style="margin-top:5px;">
@@ -233,7 +233,7 @@ export default {
                         }
                         if (key == 9) {
                             this.$refs["a" + this.currentItem].focus();
-                            if (this.currentItem < 2) {
+                            if (this.currentItem < 4) {
                                 this.currentItem++;
                             } else {
                                 this.currentItem = 0;
