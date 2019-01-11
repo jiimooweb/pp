@@ -120,6 +120,7 @@
                 </row>
                 <row style="margin-top:5px;">
                     <i-button type="primary" @click='inputData()'>保存</i-button>
+                    <i-button type="success" @click='resetData()'>上次资料</i-button>
                 </row>
             </i-col>
         </row>
@@ -142,6 +143,7 @@ export default {
             rankReset:[],
             activeRank: 0,
             ain: 0,
+            lastData:{},
             itemData: {
                 id:0,
                 img_id: 0,
@@ -205,7 +207,8 @@ export default {
                     this.rankData = res.data.leaderboards;
                     this.rangNum = this.rankData.length;
                     this.currentItem = 1;
-                    
+                    this.activeRank = 0
+                    this.itemData = this.rankData[0]
                     
                     if(this.rangNum === 0){
                         return
@@ -273,8 +276,14 @@ export default {
                     };
                 });
         },
+        resetData(){
+            console.log(this.lastData);
+            // return
+            this.itemData = this.lastData
+        },
         inputData(){
             this.spinShow = true
+            this.lastData = this.itemData
                             //保存
                             axios.request({
                                 url:'leaderboards/'+this.itemData.id,
