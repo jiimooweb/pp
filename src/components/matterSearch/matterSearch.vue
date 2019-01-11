@@ -101,6 +101,7 @@ export default {
         submitSearch(page = this.currentPage) {
             // console.log(this.index);
             // return;
+            console.log(this.tag === undefined);
             axios
                 .request({
                     url:
@@ -113,7 +114,7 @@ export default {
                         "&id=" +
                         this.id +
                         "&tag_id=" +
-                        this.tag,
+                        ((this.tag === undefined)?'':this.tag),
                     method: "get"
                 })
                 .then(res => {
