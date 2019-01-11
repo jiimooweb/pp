@@ -61,72 +61,73 @@ export default {
     props: [],
     data() {
         return {
-            per_page:1,
-            total:1,
-            currentPage:1,
+            per_page: 1,
+            total: 1,
+            currentPage: 1,
 
             title: "",
             author: "",
             id: "",
             tag: "",
             indexPage: 1,
-            tagsList:''
+            tagsList: ""
         };
     },
     methods: {
         changePage(index) {
             this.currentPage = index;
-            this.submitSearch()
+            this.submitSearch();
         },
         getTags() {
             axios
-                    .request({
-                        url: "tags/all",
-                        method: "get"
-                    })
-                    .then(res => {
-                        this.tagsList = []
-                        for(let i=0;i<res.data.length;i++){
-                            this.tagsList.push({
-                                label:res.data[i].name,
-                                value:res.data[i].id
-                            })
-                        }
-                    });
+                .request({
+                    url: "tags/all",
+                    method: "get"
+                })
+                .then(res => {
+                    this.tagsList = [];
+                    for (let i = 0; i < res.data.length; i++) {
+                        this.tagsList.push({
+                            label: res.data[i].name,
+                            value: res.data[i].id
+                        });
+                    }
+                });
         },
-        commit(){
-            this.currentPage = 1
-            this.submitSearch()
+        commit() {
+            this.currentPage = 1;
+            this.submitSearch();
         },
         submitSearch(page = this.currentPage) {
             // console.log(this.index);
             // return;
-            console.log(this.tag === undefined);
+            
+            let url =
+                "pictures?page=" +
+                page +
+                "&title=" +
+                encodeURIComponent(this.title) +
+                "&author=" +
+                encodeURIComponent(this.author) +
+                "&id=" +
+                this.id +
+                "&tag_id=" +
+                (this.tag === undefined ? "" : this.tag);
             axios
                 .request({
-                    url:
-                        "pictures?page=" +
-                        page +
-                        "&title=" +
-                        this.title +
-                        "&author=" +
-                        this.author +
-                        "&id=" +
-                        this.id +
-                        "&tag_id=" +
-                        ((this.tag === undefined)?'':this.tag),
+                    url: url,
                     method: "get"
                 })
                 .then(res => {
-                    this.total = res.data.total
-                    this.per_page = res.data.per_page
-                    this.currentPage = res.data.current_page
+                    this.total = res.data.total;
+                    this.per_page = res.data.per_page;
+                    this.currentPage = res.data.current_page;
                     this.$emit("listenToparent", res);
                 });
         }
     },
-    mounted(){
-        this.getTags()
+    mounted() {
+        this.getTags();
     },
     watch: {
         index: function(newVal, oldVal) {
