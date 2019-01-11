@@ -136,7 +136,7 @@ export default {
         return {
             spinShow:false,
             newDate: "",
-            yearList: [{ key: "2018" }, { key: "2019" }],
+            yearList: [{ key: "2018" }, { key: "2019" }, { key: "2020" }],
             dateList: [],
             rankData: [],
             rankReset:[],
@@ -155,8 +155,8 @@ export default {
                 sid: 0
             },
             currentItem: 1,
-            year: "2018",
-            month: 11,
+            year: '',
+            month: '',
             day: "",
             currentDayId:''
         };
@@ -337,11 +337,15 @@ export default {
                         this.dateList = res.data;
                     });
             }
+        },
+        setDate(){
+            this.year = new Date().getFullYear() + ''
+            this.month = new Date().getMonth()
         }
     },
     mounted() {
+        this.setDate()
         this.getRankDay();
-        
     },
     destroyed(){
         document.onkeydown = undefined
