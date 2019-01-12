@@ -277,13 +277,19 @@ export default {
                 });
         },
         resetData(){
-            console.log(this.lastData);
             // return
             this.itemData = this.lastData
+            // this.itemData.id = this.rankData[this.activeRank].id
+            this.$set(this.itemData,'id',this.rankData[this.activeRank].id)
+            
         },
         inputData(){
             this.spinShow = true
-            this.lastData = this.itemData
+            // this.lastData = this.itemData
+            this.lastData = {}
+            for(let i in this.itemData){
+                this.$set(this.lastData,i,this.itemData[i])
+            }
                             //保存
                             axios.request({
                                 url:'leaderboards/'+this.itemData.id,
