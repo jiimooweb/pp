@@ -290,6 +290,15 @@ export default {
             for(let i in this.itemData){
                 this.$set(this.lastData,i,this.itemData[i])
             }
+            this.$set(this.rankData[this.activeRank],'ranking',this.itemData.ranking)
+            this.$set(this.rankData[this.activeRank],'old_ranking',this.itemData.old_ranking)
+            this.$set(this.rankData[this.activeRank],'count',this.itemData.count)
+            this.$set(this.rankData[this.activeRank],'definition',this.itemData.definition)
+            this.$set(this.rankData[this.activeRank],'sid',this.itemData.sid)
+            this.$set(this.rankData[this.activeRank],'is_first',this.itemData.is_first)
+            this.$set(this.rankData[this.activeRank],'is_hidden',this.itemData.is_hidden)
+            console.log(this.rankData[this.activeRank]);
+            
                             //保存
                             axios.request({
                                 url:'leaderboards/'+this.itemData.id,
