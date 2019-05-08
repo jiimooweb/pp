@@ -102,9 +102,14 @@
                         <div>上传中~~~</div>
                     </Spin>
                     <Upload style="margin-bottom:10px;" action="https://www.rdoorweb.com/pzhan/public/qiniu/upload" :on-success='successUpload' :before-upload='beforeUpload' :show-upload-list='false' :headers="headers">
-                        <Button icon="ios-cloud-upload-outline">上传图片</Button>
+                        <Button icon="ios-cloud-upload-outline">上传图片到七牛云</Button>
                     </Upload>
-                    <img :src="picData.url" width="200px">
+                    <Upload style="margin-bottom:10px;" action="https://www.rdoorweb.com/pzhan/public/sina/upload" :on-success='successUploadSina' :before-upload='beforeUploadSina' :show-upload-list='false' :headers="headers">
+                        <Button icon="ios-cloud-upload-outline">上传图片到新浪</Button>
+                    </Upload>
+                    <img :src="picData.url" v-if='!isSina' width="200px">
+                    <img :src="'https://ws3.sinaimg.cn/large/'+ picData.sina_id +'.jpg'" v-else width="200px">
+                    
                 </i-col>
             </row>
         </Modal>
@@ -195,6 +200,13 @@ export default {
                 author: "",
                 click: "",
                 point:5,
+
+                // sina
+                height: '',
+                name: "",
+                sina_id: "",
+                size: '',
+                width: '',
             },
             currentTags: [],
             tagsList: [
@@ -333,6 +345,13 @@ export default {
                                                 author: params.row.author,
                                                 click: params.row.click,
                                                 point:params.row.point,
+
+                                                // sina
+                                                height: params.row.height,
+                                                name: params.row.name,
+                                                sina_id: params.row.sina_id,
+                                                size: params.row.size,
+                                                width: params.row.width,
                                             }
                                             this.currentId = params.row.id;
                                         }
@@ -370,7 +389,8 @@ export default {
                     collect: "2",
                     click: "123"
                 }
-            ]
+            ],
+            isSina:false,
         };
     },
     methods: {
@@ -472,6 +492,11 @@ export default {
                     author: "",
                     click: "0",
                     point:5,
+                    height: '',
+                    name: "",
+                    sina_id: "",
+                    size: '',
+                    width: '',
                 };
                 this.selectTags = [];
                 this.currentId = [];
@@ -533,6 +558,7 @@ export default {
         },
         //successUpload
         successUpload(file) {
+            this.isSina = false
             this.spinShow = false;
             if (this.picData.url !== "") {
                 axios.request({
@@ -551,6 +577,25 @@ export default {
             this.picData.pic_id = (file.name.split('.'))[0].replace("_p0","");
             this.spinShow = true;
         },
+
+        //successUpload 新浪
+        successUploadSina(file) {
+            this.isSina = true
+            
+            this.spinShow = false;
+            this.picData.height = file.data.height
+            this.picData.name = file.data.name
+            this.picData.sina_id = file.data.sina_id
+            this.picData.size = file.data.size
+            this.picData.width = file.data.width
+            this.isUpload = true;
+        },
+        //beforeUpload 新浪
+        beforeUploadSina(file) {
+            this.picData.pic_id = (file.name.split('.'))[0].replace("_p0","");
+            this.spinShow = true;
+        },
+
         getOldData() {
             this.picData.title = localStorage.getItem("title");
             this.picData.author = localStorage.getItem("author");
@@ -568,7 +613,7 @@ export default {
             if (this.isNewPic) {
                 axios
                     .request({
-                        url: "pictures",
+                        url: this.isSina?"sinas":"pictures",
                         method: "post",
                         data: {
                             picture: {
@@ -578,7 +623,13 @@ export default {
                                 status: this.picData.status,
                                 author: this.picData.author,
                                 click: this.picData.click,
-                                point:this.picData.point
+                                point:this.picData.point,
+
+                                height:this.picData.height,
+                                // name:this.picData.name,
+                                sina_id:this.picData.sina_id,
+                                size:this.picData.size,
+                                width:this.picData.width,
                             },
                             tags: this.selectTags
                         }
@@ -603,7 +654,7 @@ export default {
             } else {
                 axios
                     .request({
-                        url: "pictures/" + this.currentId,
+                        url: (this.isSina?"sinas/":"pictures/") + this.currentId,
                         method: "put",
                         data: {
                             picture: {
@@ -613,7 +664,14 @@ export default {
                                 status: this.picData.status,
                                 author: this.picData.author,
                                 click: this.picData.click,
-                                point:this.picData.point
+                                point:this.picData.point,
+
+
+                                height:this.picData.height,
+                                // name:this.picData.name,
+                                sina_id:this.picData.sina_id,
+                                size:this.picData.size,
+                                width:this.picData.width,
                             },
                             tags: this.selectTags
                         }

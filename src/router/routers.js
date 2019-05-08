@@ -145,9 +145,17 @@ export default [
                     icon: 'ios-paper-outline'
                 },
                 component: () => import('@/view/pzhanAll/test/aa.vue')
-            }
+            },{
+                path: 'getALLPICID',
+                name: 'test',
+                meta: {
+                    icon: 'ios-paper-outline'
+                },
+                component: () => import('@/view/pzhanAll/getALLPICID/getALLPICID.vue')
+            },
         ]
     },
+    
     {
         path: '/401',
         name: 'error_401',
