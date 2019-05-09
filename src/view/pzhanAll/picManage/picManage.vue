@@ -240,7 +240,7 @@ export default {
                                 attrs: {
                                     src:
                                         params.row.url +
-                                        "?imageMogr2/auto-orient/thumbnail/x50/blur/1x0/quality/75",
+                                        (params.row.type!=='S'?"?imageMogr2/auto-orient/thumbnail/x50/blur/1x0/quality/75":''),
                                     style:
                                         "height:50px;margin:0 auto;display:block;"
                                 },
