@@ -239,14 +239,13 @@ export default {
                             {
                                 attrs: {
                                     src:
-                                        params.row.url +
-                                        (params.row.type!=='S'?"?imageMogr2/auto-orient/thumbnail/x50/blur/1x0/quality/75":''),
+                                        (params.row.type!=='S'?params.row.url +"?imageMogr2/auto-orient/thumbnail/x50/blur/1x0/quality/75":'http://ws3.sinaimg.cn/large/'+params.row.sina_id),
                                     style:
                                         "height:50px;margin:0 auto;display:block;"
                                 },
                                 on: {
                                     click: () => {
-                                        this.reviewPic = params.row.url;
+                                        this.reviewPic = (params.row.type!=='S'?params.row.url +"?imageMogr2/auto-orient/thumbnail/x50/blur/1x0/quality/75":'http://ws3.sinaimg.cn/large/'+params.row.sina_id);
                                         this.openreviewModal(true);
                                     }
                                 }
