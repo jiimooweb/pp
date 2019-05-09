@@ -340,7 +340,7 @@ export default {
                                             this.picData = {
                                                 pic_id: params.row.pic_id,
                                                 title: params.row.title,
-                                                url: params.row.url,
+                                                url: params.row.type!=='S'?params.row.url:'http://ws3.sinaimg.cn/large/'+params.row.sina_id,
                                                 status: params.row.status,
                                                 author: params.row.author,
                                                 click: params.row.click,
