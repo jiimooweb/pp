@@ -588,6 +588,7 @@ export default {
             this.picData.sina_id = file.data.sina_id
             this.picData.size = file.data.size
             this.picData.width = file.data.width
+            this.picData.url = 'http://ws3.sinaimg.cn/large/'+file.data.sina_id;
             this.isUpload = true;
         },
         //beforeUpload 新浪
